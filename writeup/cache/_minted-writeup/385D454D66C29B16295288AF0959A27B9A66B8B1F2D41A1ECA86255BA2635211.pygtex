@@ -1,0 +1,37 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{using} \PYG{n+nn}{System.Collections}\PYG{p}{;}
+\PYG{k}{using} \PYG{n+nn}{System.Collections.Generic}\PYG{p}{;}
+\PYG{k}{using} \PYG{n+nn}{UnityEngine}\PYG{p}{;}
+\PYG{k}{using} \PYG{n+nn}{UnityEngine.UI}\PYG{p}{;}
+
+\PYG{c+cm}{/*}
+\PYG{c+cm}{ *	DiceRoller.cs}
+\PYG{c+cm}{ *	Author: Daniel Hannon (19484286)}
+\PYG{c+cm}{ *	Version: 1}
+\PYG{c+cm}{ */}
+
+\PYG{k}{public} \PYG{k}{class} \PYG{n+nc}{DiceRoller} \PYG{p}{:} \PYG{n}{MonoBehaviour} \PYG{p}{\PYGZob{}}
+	\PYG{c+c1}{// Start is called before the first frame update}
+	\PYG{k}{public} \PYG{n}{Sprite}\PYG{p}{[]} \PYG{n}{AttackDiceFaces}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{Sprite}\PYG{p}{[]} \PYG{n}{DefenseDiceFaces}\PYG{p}{;}
+	\PYG{k}{public} \PYG{k+kt}{int} \PYG{n}{dice\PYGZus{}type}\PYG{p}{;}
+	\PYG{k}{public} \PYG{k+kt}{int} \PYG{n}{current\PYGZus{}value} \PYG{p}{=} \PYG{l+m}{0}\PYG{p}{;}
+
+	\PYG{k}{public} \PYG{k+kt}{int} \PYG{n+nf}{Roll}\PYG{p}{()} \PYG{p}{\PYGZob{}}
+		\PYG{n}{current\PYGZus{}value} \PYG{p}{=} \PYG{n}{Random}\PYG{p}{.}\PYG{n}{Range}\PYG{p}{(}\PYG{l+m}{1}\PYG{p}{,} \PYG{l+m}{7}\PYG{p}{);}
+		\PYG{k}{if} \PYG{p}{(}\PYG{n}{dice\PYGZus{}type} \PYG{p}{==} \PYG{l+m}{0}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+			\PYG{c+c1}{//Attack Dice}
+			\PYG{n}{gameObject}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Image}\PYG{p}{\PYGZgt{}().}\PYG{n}{sprite} \PYG{p}{=} \PYG{n}{AttackDiceFaces}\PYG{p}{[}\PYG{n}{current\PYGZus{}value}\PYG{p}{];}
+		\PYG{p}{\PYGZcb{}}
+		\PYG{k}{else} \PYG{p}{\PYGZob{}}
+			\PYG{c+c1}{//Defense Dice}
+			\PYG{n}{gameObject}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Image}\PYG{p}{\PYGZgt{}().}\PYG{n}{sprite} \PYG{p}{=} \PYG{n}{DefenseDiceFaces}\PYG{p}{[}\PYG{n}{current\PYGZus{}value}\PYG{p}{];}
+		\PYG{p}{\PYGZcb{}}
+		\PYG{k}{return} \PYG{n}{current\PYGZus{}value}\PYG{p}{;}
+	\PYG{p}{\PYGZcb{}}
+
+	\PYG{k}{public} \PYG{k}{void} \PYG{n+nf}{SetInactive}\PYG{p}{()} \PYG{p}{\PYGZob{}}
+		\PYG{n}{gameObject}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Image}\PYG{p}{\PYGZgt{}().}\PYG{n}{sprite} \PYG{p}{=} \PYG{n}{AttackDiceFaces}\PYG{p}{[}\PYG{l+m}{0}\PYG{p}{];}
+	\PYG{p}{\PYGZcb{}}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

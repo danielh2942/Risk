@@ -1,0 +1,72 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{using} \PYG{n+nn}{System.Collections}\PYG{p}{;}
+\PYG{k}{using} \PYG{n+nn}{System.Collections.Generic}\PYG{p}{;}
+\PYG{k}{using} \PYG{n+nn}{UnityEngine}\PYG{p}{;}
+
+\PYG{c+cm}{/**}
+\PYG{c+cm}{ *  Province.cs}
+\PYG{c+cm}{ *  Author: Daniel Hannon (19484286)}
+\PYG{c+cm}{ *  Version: 1}
+\PYG{c+cm}{ */}
+
+\PYG{k}{public} \PYG{k}{class} \PYG{n+nc}{Province} \PYG{p}{:} \PYG{n}{MonoBehaviour} \PYG{p}{\PYGZob{}}
+	\PYG{k}{public} \PYG{k+kt}{string} \PYG{n}{ProvinceName}\PYG{p}{;}
+	\PYG{k}{public} \PYG{k+kt}{string} \PYG{n}{Color} \PYG{p}{=} \PYG{l+s}{\PYGZdq{}neutral\PYGZdq{}}\PYG{p}{;}
+	\PYG{k}{public} \PYG{k+kt}{int} \PYG{n}{TroopCount} \PYG{p}{=} \PYG{l+m}{0}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{GameObject} \PYG{n}{Flag}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{GameObject} \PYG{n}{TroopField}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{GameObject}\PYG{p}{[]} \PYG{n}{neighbors}\PYG{p}{;}
+	\PYG{k}{private} \PYG{n}{LineRenderer} \PYG{n}{highlight} \PYG{p}{=} \PYG{k}{null}\PYG{p}{;}
+
+
+	\PYG{k}{void} \PYG{n+nf}{start}\PYG{p}{()} \PYG{p}{\PYGZob{}}
+		\PYG{n}{TroopCount} \PYG{p}{=} \PYG{l+m}{0}\PYG{p}{;}
+		\PYG{n}{Color} \PYG{p}{=} \PYG{l+s}{\PYGZdq{}neutral\PYGZdq{}}\PYG{p}{;}
+	\PYG{p}{\PYGZcb{}}
+
+	\PYG{k}{void} \PYG{n+nf}{Update}\PYG{p}{()} \PYG{p}{\PYGZob{}}
+
+		\PYG{k}{if}\PYG{p}{(}\PYG{n}{TroopField}\PYG{p}{!=} \PYG{k}{null}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+			\PYG{n}{TroopField}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{TextMesh}\PYG{p}{\PYGZgt{}().}\PYG{n}{text} \PYG{p}{=} \PYG{n}{TroopCount}\PYG{p}{.}\PYG{n}{ToString}\PYG{p}{();}
+		\PYG{p}{\PYGZcb{}}
+	\PYG{p}{\PYGZcb{}}
+
+   \PYG{k}{public} \PYG{k}{void} \PYG{n+nf}{Select}\PYG{p}{()} \PYG{p}{\PYGZob{}}
+		\PYG{c+c1}{//The select method creates a LineRenderer and follows the path set by the PolygonCollider used to outline the border of the country}
+		\PYG{c+c1}{//As a means of letting the user know what territory they currently have selected, I realized this would be a better option than}
+		\PYG{c+c1}{//Some UI prompt that has something like *Currently Selected: Region Name* as region names are not on the map}
+		\PYG{n}{highlight} \PYG{p}{=} \PYG{n}{gameObject}\PYG{p}{.}\PYG{n}{AddComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{LineRenderer}\PYG{p}{\PYGZgt{}();}
+		\PYG{k}{if} \PYG{p}{(}\PYG{n}{highlight}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+			\PYG{n}{Vector2}\PYG{p}{[]} \PYG{n}{path} \PYG{p}{=} \PYG{n}{gameObject}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{PolygonCollider2D}\PYG{p}{\PYGZgt{}().}\PYG{n}{points}\PYG{p}{;}
+			\PYG{n}{Color} \PYG{n}{black} \PYG{p}{=} \PYG{k}{new} \PYG{n}{Color}\PYG{p}{(}\PYG{l+m}{0}\PYG{p}{,} \PYG{l+m}{0}\PYG{p}{,} \PYG{l+m}{0}\PYG{p}{,} \PYG{l+m}{1}\PYG{p}{);}
+			\PYG{n}{highlight}\PYG{p}{.}\PYG{n}{material} \PYG{p}{=} \PYG{k}{new} \PYG{n}{Material}\PYG{p}{(}\PYG{n}{Shader}\PYG{p}{.}\PYG{n}{Find}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Legacy Shaders/Particles/Alpha Blended Premultiply\PYGZdq{}}\PYG{p}{));}
+			\PYG{n}{highlight}\PYG{p}{.}\PYG{n}{startColor} \PYG{p}{=} \PYG{n}{black}\PYG{p}{;}
+			\PYG{n}{highlight}\PYG{p}{.}\PYG{n}{endColor} \PYG{p}{=} \PYG{n}{black}\PYG{p}{;}
+			\PYG{n}{highlight}\PYG{p}{.}\PYG{n}{startWidth} \PYG{p}{=} \PYG{l+m}{0.03f}\PYG{p}{;}
+			\PYG{k}{for} \PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{i} \PYG{p}{=} \PYG{l+m}{0}\PYG{p}{;} \PYG{n}{i} \PYG{p}{\PYGZlt{}} \PYG{n}{path}\PYG{p}{.}\PYG{n}{Length}\PYG{p}{;} \PYG{n}{i}\PYG{p}{++)} \PYG{p}{\PYGZob{}}
+				\PYG{n}{path}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]} \PYG{p}{=} \PYG{n}{gameObject}\PYG{p}{.}\PYG{n}{transform}\PYG{p}{.}\PYG{n}{TransformPoint}\PYG{p}{(}\PYG{n}{path}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]);}
+			\PYG{p}{\PYGZcb{}}
+			\PYG{n}{highlight}\PYG{p}{.}\PYG{n}{positionCount} \PYG{p}{=} \PYG{n}{path}\PYG{p}{.}\PYG{n}{Length} \PYG{p}{+} \PYG{l+m}{1}\PYG{p}{;}
+			\PYG{k}{for} \PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{i} \PYG{p}{=} \PYG{l+m}{0}\PYG{p}{;} \PYG{n}{i} \PYG{p}{\PYGZlt{}} \PYG{n}{path}\PYG{p}{.}\PYG{n}{Length}\PYG{p}{;} \PYG{n}{i}\PYG{p}{++)} \PYG{p}{\PYGZob{}}
+				\PYG{n}{Vector3} \PYG{n}{finalLine} \PYG{p}{=} \PYG{n}{path}\PYG{p}{[}\PYG{n}{i}\PYG{p}{];}
+				\PYG{n}{finalLine}\PYG{p}{.}\PYG{n}{z} \PYG{p}{=} \PYG{l+m}{30}\PYG{p}{;}
+				\PYG{n}{highlight}\PYG{p}{.}\PYG{n}{SetPosition}\PYG{p}{(}\PYG{n}{i}\PYG{p}{,} \PYG{n}{finalLine}\PYG{p}{);}
+
+				\PYG{k}{if} \PYG{p}{(}\PYG{n}{i} \PYG{p}{==} \PYG{p}{(}\PYG{n}{path}\PYG{p}{.}\PYG{n}{Length} \PYG{p}{\PYGZhy{}} \PYG{l+m}{1}\PYG{p}{))} \PYG{p}{\PYGZob{}}
+					\PYG{n}{finalLine} \PYG{p}{=} \PYG{n}{path}\PYG{p}{[}\PYG{l+m}{0}\PYG{p}{];}
+					\PYG{n}{finalLine}\PYG{p}{.}\PYG{n}{z} \PYG{p}{=} \PYG{l+m}{30}\PYG{p}{;}
+					\PYG{n}{highlight}\PYG{p}{.}\PYG{n}{SetPosition}\PYG{p}{(}\PYG{n}{path}\PYG{p}{.}\PYG{n}{Length}\PYG{p}{,} \PYG{n}{finalLine}\PYG{p}{);}
+				\PYG{p}{\PYGZcb{}}
+			\PYG{p}{\PYGZcb{}}
+		\PYG{p}{\PYGZcb{}}
+	\PYG{p}{\PYGZcb{}}
+
+	\PYG{k}{public} \PYG{k}{void} \PYG{n+nf}{Deselect}\PYG{p}{()} \PYG{p}{\PYGZob{}}
+		\PYG{c+c1}{//This destroys the LineRenderer (I was worried it\PYGZsq{}d delete the points for the PolygonCollider but luckily it does not)}
+		\PYG{k}{if} \PYG{p}{(}\PYG{n}{highlight}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+			\PYG{n}{Destroy}\PYG{p}{(}\PYG{n}{gameObject}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{LineRenderer}\PYG{p}{\PYGZgt{}());}
+			\PYG{n}{highlight} \PYG{p}{=} \PYG{k}{null}\PYG{p}{;}
+		\PYG{p}{\PYGZcb{}}
+	\PYG{p}{\PYGZcb{}}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

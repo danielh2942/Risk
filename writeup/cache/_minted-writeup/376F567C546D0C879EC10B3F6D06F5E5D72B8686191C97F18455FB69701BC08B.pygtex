@@ -1,0 +1,770 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{using} \PYG{n+nn}{System.Collections}\PYG{p}{;}
+\PYG{k}{using} \PYG{n+nn}{System.Collections.Generic}\PYG{p}{;}
+\PYG{k}{using} \PYG{n+nn}{UnityEngine}\PYG{p}{;}
+\PYG{k}{using} \PYG{n+nn}{UnityEngine.UI}\PYG{p}{;}
+
+
+\PYG{c+cm}{/*}
+\PYG{c+cm}{ *	GameManagerScript.cs}
+\PYG{c+cm}{ *	Author: Daniel Hannon (19484286)}
+\PYG{c+cm}{ *	Version: 1}
+\PYG{c+cm}{ */}
+\PYG{k}{public} \PYG{k}{class} \PYG{n+nc}{GameManagerScript} \PYG{p}{:} \PYG{n}{MonoBehaviour} \PYG{p}{\PYGZob{}}
+	\PYG{c+c1}{// Game Control Variables}
+	\PYG{k}{public} \PYG{n}{Camera} \PYG{n}{mainCamera}\PYG{p}{;}
+	\PYG{k}{public} \PYG{k+kt}{bool} \PYG{n}{InDebugMode}\PYG{p}{;}
+	\PYG{k}{private} \PYG{k+kt}{bool} \PYG{n}{attackMenuVisible} \PYG{p}{=} \PYG{k}{false}\PYG{p}{;}
+	\PYG{k}{private} \PYG{k+kt}{bool} \PYG{n}{reinforceMenuVisible} \PYG{p}{=} \PYG{k}{false}\PYG{p}{;}
+	\PYG{k}{private} \PYG{k+kt}{bool} \PYG{n}{mainMenuVisible} \PYG{p}{=} \PYG{k}{true}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{Text} \PYG{n}{statusBar}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{Button} \PYG{n}{EndTurnButton}\PYG{p}{;}
+
+	\PYG{c+c1}{//Selectors}
+	\PYG{k}{public} \PYG{n}{GameObject} \PYG{n}{selected}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{GameObject} \PYG{n}{selected2}\PYG{p}{;}
+
+	\PYG{c+c1}{//Menus}
+	\PYG{k}{public} \PYG{n}{GameObject} \PYG{n}{atkmenu}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{GameObject} \PYG{n}{renMenu}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{GameObject} \PYG{n}{statusMenu}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{GameObject} \PYG{n}{mainMenu}\PYG{p}{;}
+
+	\PYG{c+c1}{//Main Menu Buttons}
+	\PYG{k}{public} \PYG{n}{Text} \PYG{n}{MenuText}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{Button} \PYG{n}{twoPlayerButton}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{Button} \PYG{n}{threePlayerButton}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{Button} \PYG{n}{fourPlayerButton}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{Button} \PYG{n}{fivePlayerButton}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{Button} \PYG{n}{sixPlayerButton}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{Button} \PYG{n}{quitGame}\PYG{p}{;}
+
+	\PYG{c+c1}{//Attack Menu Specific Variables}
+	\PYG{k}{public} \PYG{n}{Text} \PYG{n}{attacker}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{Text} \PYG{n}{defender}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{Text} \PYG{n}{attackerTextCount}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{Text} \PYG{n}{defenderTextCount}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{GameObject}\PYG{p}{[]} \PYG{n}{AttackerDie}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{GameObject}\PYG{p}{[]} \PYG{n}{DefenderDie}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{Button} \PYG{n}{AttackButton}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{Button} \PYG{n}{DoOrDieButton}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{Button} \PYG{n}{CancelButton}\PYG{p}{;}
+
+	\PYG{c+c1}{//Reinforce Menu Specific Variables}
+	\PYG{k}{public} \PYG{n}{Text} \PYG{n}{ReinforceFrom}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{Text} \PYG{n}{ReinforceTo}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{Text} \PYG{n}{ReinforceFromCount}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{Text} \PYG{n}{ReinforceToCount}\PYG{p}{;}
+	\PYG{k}{private} \PYG{k+kt}{int} \PYG{n}{FromTerritoryTemp} \PYG{p}{=} \PYG{l+m}{0}\PYG{p}{;}
+	\PYG{k}{private} \PYG{k+kt}{int} \PYG{n}{ToTerritoryTemp} \PYG{p}{=} \PYG{l+m}{0}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{Button} \PYG{n}{reinforceCancel}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{Button} \PYG{n}{reinforceConfirm}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{Button} \PYG{n}{reinforceAdd1}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{Button} \PYG{n}{reinforceDec1}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{Button} \PYG{n}{reinforceAdd5}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{Button} \PYG{n}{reinforceDec5}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{Button} \PYG{n}{reinforceAddAB1}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{Button} \PYG{n}{reinforceDecAB1}\PYG{p}{;}
+
+	\PYG{c+c1}{//Turn Specific stuff}
+	\PYG{k}{enum} \PYG{n}{Stages} \PYG{p}{\PYGZob{}} \PYG{n}{NOT\PYGZus{}STARTED}\PYG{p}{,} \PYG{n}{GAME\PYGZus{}SETUP}\PYG{p}{,} \PYG{n}{REPLENISH}\PYG{p}{,} \PYG{n}{ATTACK}\PYG{p}{,} \PYG{n}{REINFORCE} \PYG{p}{\PYGZcb{};}
+	\PYG{n}{Stages} \PYG{n}{currStage} \PYG{p}{=} \PYG{n}{Stages}\PYG{p}{.}\PYG{n}{NOT\PYGZus{}STARTED}\PYG{p}{;}
+	\PYG{k+kt}{int} \PYG{n}{currentPlayer} \PYG{p}{=} \PYG{l+m}{0}\PYG{p}{;}
+	\PYG{k+kt}{int} \PYG{n}{numberOfActivePlayers} \PYG{p}{=} \PYG{l+m}{2}\PYG{p}{;}
+	\PYG{k+kt}{int} \PYG{n}{numberOfTroopsToPlace} \PYG{p}{=} \PYG{l+m}{0}\PYG{p}{;}
+	\PYG{k}{public} \PYG{n}{List}\PYG{p}{\PYGZlt{}}\PYG{k+kt}{string}\PYG{p}{\PYGZgt{}} \PYG{n}{playerColors}\PYG{p}{;}
+	\PYG{n}{List}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}[]} \PYG{n}{TeamTerritories} \PYG{p}{=} \PYG{k}{new} \PYG{n}{List}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}[}\PYG{l+m}{6}\PYG{p}{];}
+	\PYG{k}{public} \PYG{k+kt}{bool} \PYG{n}{reinforcementPerformedThisTurn} \PYG{p}{=} \PYG{k}{false}\PYG{p}{;}
+
+
+	\PYG{c+c1}{// Essential Game Variables}
+	\PYG{c+c1}{// I initalize everything at runtime so I don\PYGZsq{}t need to constantly allocate/deallocate memory}
+	\PYG{k}{public} \PYG{n}{List}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}} \PYG{n}{ClosedList} \PYG{p}{=} \PYG{k}{new} \PYG{n}{List}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}();}
+	\PYG{k}{public} \PYG{n}{List}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}} \PYG{n}{OpenList} \PYG{p}{=} \PYG{k}{new} \PYG{n}{List}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}();}
+	\PYG{k}{public} \PYG{n}{List}\PYG{p}{\PYGZlt{}}\PYG{k+kt}{string}\PYG{p}{\PYGZgt{}} \PYG{n}{TeamColors} \PYG{p}{=} \PYG{k}{new} \PYG{n}{List}\PYG{p}{\PYGZlt{}}\PYG{k+kt}{string}\PYG{p}{\PYGZgt{}()} \PYG{p}{\PYGZob{}} \PYG{l+s}{\PYGZdq{}neutral\PYGZdq{}}\PYG{p}{,} \PYG{l+s}{\PYGZdq{}red\PYGZdq{}}\PYG{p}{,} \PYG{l+s}{\PYGZdq{}blue\PYGZdq{}}\PYG{p}{,} \PYG{l+s}{\PYGZdq{}green\PYGZdq{}}\PYG{p}{,} \PYG{l+s}{\PYGZdq{}yellow\PYGZdq{}}\PYG{p}{,} \PYG{l+s}{\PYGZdq{}pink\PYGZdq{}}\PYG{p}{,} \PYG{l+s}{\PYGZdq{}brown\PYGZdq{}}\PYG{p}{\PYGZcb{};}
+	\PYG{k}{public} \PYG{n}{List}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}} \PYG{n}{AllProvinces} \PYG{p}{=} \PYG{k}{new} \PYG{n}{List}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}();}
+	\PYG{k}{public} \PYG{n}{List}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}} \PYG{n}{Europe} \PYG{p}{=} \PYG{k}{new} \PYG{n}{List}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}();}
+	\PYG{k}{public} \PYG{n}{List}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}} \PYG{n}{Africa} \PYG{p}{=} \PYG{k}{new} \PYG{n}{List}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}();}
+	\PYG{k}{public} \PYG{n}{List}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}} \PYG{n}{Asia} \PYG{p}{=} \PYG{k}{new} \PYG{n}{List}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}();}
+	\PYG{k}{public} \PYG{n}{List}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}} \PYG{n}{Oceania} \PYG{p}{=} \PYG{k}{new} \PYG{n}{List}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}();}
+	\PYG{k}{public} \PYG{n}{List}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}} \PYG{n}{SouthAmerica} \PYG{p}{=} \PYG{k}{new} \PYG{n}{List}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}();}
+	\PYG{k}{public} \PYG{n}{List}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}} \PYG{n}{NorthAmerica} \PYG{p}{=} \PYG{k}{new} \PYG{n}{List}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}();}
+
+	\PYG{k}{void} \PYG{n+nf}{Start}\PYG{p}{()} \PYG{p}{\PYGZob{}}
+		\PYG{n}{mainCamera}\PYG{p}{.}\PYG{n}{aspect} \PYG{p}{=} \PYG{l+m}{23f} \PYG{p}{/} \PYG{l+m}{9f}\PYG{p}{;}
+		\PYG{c+c1}{//Attack Menu Setup}
+		\PYG{n}{atkmenu}\PYG{p}{.}\PYG{n}{SetActive}\PYG{p}{(}\PYG{k}{false}\PYG{p}{);}
+		\PYG{n}{AttackButton}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Button}\PYG{p}{\PYGZgt{}().}\PYG{n}{onClick}\PYG{p}{.}\PYG{n}{AddListener}\PYG{p}{(}\PYG{n}{PerformAttack}\PYG{p}{);}
+		\PYG{n}{CancelButton}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Button}\PYG{p}{\PYGZgt{}().}\PYG{n}{onClick}\PYG{p}{.}\PYG{n}{AddListener}\PYG{p}{(}\PYG{n}{CancelButtonListener}\PYG{p}{);}
+		\PYG{n}{DoOrDieButton}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Button}\PYG{p}{\PYGZgt{}().}\PYG{n}{onClick}\PYG{p}{.}\PYG{n}{AddListener}\PYG{p}{(}\PYG{n}{DoOrDieListener}\PYG{p}{);}
+
+		\PYG{c+c1}{//Reinforce Menu Setup}
+		\PYG{n}{renMenu}\PYG{p}{.}\PYG{n}{SetActive}\PYG{p}{(}\PYG{k}{false}\PYG{p}{);}
+		\PYG{n}{reinforceCancel}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Button}\PYG{p}{\PYGZgt{}().}\PYG{n}{onClick}\PYG{p}{.}\PYG{n}{AddListener}\PYG{p}{(}\PYG{n}{CancelReinforce}\PYG{p}{);}
+		\PYG{n}{reinforceAdd1}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Button}\PYG{p}{\PYGZgt{}().}\PYG{n}{onClick}\PYG{p}{.}\PYG{n}{AddListener}\PYG{p}{(}\PYG{n}{ReinforceIncrement1}\PYG{p}{);}
+		\PYG{n}{reinforceAdd5}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Button}\PYG{p}{\PYGZgt{}().}\PYG{n}{onClick}\PYG{p}{.}\PYG{n}{AddListener}\PYG{p}{(}\PYG{n}{ReinforceIncrement5}\PYG{p}{);}
+		\PYG{n}{reinforceAddAB1}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Button}\PYG{p}{\PYGZgt{}().}\PYG{n}{onClick}\PYG{p}{.}\PYG{n}{AddListener}\PYG{p}{(}\PYG{n}{ReinforceIncrementAB1}\PYG{p}{);}
+		\PYG{n}{reinforceDec1}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Button}\PYG{p}{\PYGZgt{}().}\PYG{n}{onClick}\PYG{p}{.}\PYG{n}{AddListener}\PYG{p}{(}\PYG{n}{ReinforceDecrement1}\PYG{p}{);}
+		\PYG{n}{reinforceDec5}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Button}\PYG{p}{\PYGZgt{}().}\PYG{n}{onClick}\PYG{p}{.}\PYG{n}{AddListener}\PYG{p}{(}\PYG{n}{ReinforceDecrement5}\PYG{p}{);}
+		\PYG{n}{reinforceDecAB1}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Button}\PYG{p}{\PYGZgt{}().}\PYG{n}{onClick}\PYG{p}{.}\PYG{n}{AddListener}\PYG{p}{(}\PYG{n}{ReinforceDecrementAB1}\PYG{p}{);}
+		\PYG{n}{reinforceConfirm}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Button}\PYG{p}{\PYGZgt{}().}\PYG{n}{onClick}\PYG{p}{.}\PYG{n}{AddListener}\PYG{p}{(}\PYG{n}{ReinforceConfirm}\PYG{p}{);}
+
+		\PYG{n}{EndTurnButton}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Button}\PYG{p}{\PYGZgt{}().}\PYG{n}{onClick}\PYG{p}{.}\PYG{n}{AddListener}\PYG{p}{(}\PYG{n}{NewTurn}\PYG{p}{);}
+		\PYG{n}{statusMenu}\PYG{p}{.}\PYG{n}{SetActive}\PYG{p}{(}\PYG{k}{false}\PYG{p}{);}
+
+		\PYG{n}{twoPlayerButton}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Button}\PYG{p}{\PYGZgt{}().}\PYG{n}{onClick}\PYG{p}{.}\PYG{n}{AddListener}\PYG{p}{(}\PYG{n}{TwoPlayer}\PYG{p}{);}
+		\PYG{n}{threePlayerButton}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Button}\PYG{p}{\PYGZgt{}().}\PYG{n}{onClick}\PYG{p}{.}\PYG{n}{AddListener}\PYG{p}{(}\PYG{n}{ThreePlayers}\PYG{p}{);}
+		\PYG{n}{fourPlayerButton}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Button}\PYG{p}{\PYGZgt{}().}\PYG{n}{onClick}\PYG{p}{.}\PYG{n}{AddListener}\PYG{p}{(}\PYG{n}{FourPlayers}\PYG{p}{);}
+		\PYG{n}{fivePlayerButton}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Button}\PYG{p}{\PYGZgt{}().}\PYG{n}{onClick}\PYG{p}{.}\PYG{n}{AddListener}\PYG{p}{(}\PYG{n}{FivePlayers}\PYG{p}{);}
+		\PYG{n}{sixPlayerButton}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Button}\PYG{p}{\PYGZgt{}().}\PYG{n}{onClick}\PYG{p}{.}\PYG{n}{AddListener}\PYG{p}{(}\PYG{n}{SixPlayers}\PYG{p}{);}
+		\PYG{n}{quitGame}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Button}\PYG{p}{\PYGZgt{}().}\PYG{n}{onClick}\PYG{p}{.}\PYG{n}{AddListener}\PYG{p}{(}\PYG{n}{QuitGame}\PYG{p}{);}
+
+		\PYG{n}{InDebugMode} \PYG{p}{=} \PYG{k}{false}\PYG{p}{;}
+	\PYG{p}{\PYGZcb{}}
+
+	\PYG{c+c1}{// Attack Mechanism Listeners}
+
+	\PYG{k}{void} \PYG{n+nf}{AttackSetup}\PYG{p}{()} \PYG{p}{\PYGZob{}}
+		\PYG{k}{if} \PYG{p}{(}\PYG{n}{CheckAdjacency}\PYG{p}{(}\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}(),} \PYG{n}{selected2}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}())} \PYG{p}{\PYGZam{}\PYGZam{}} \PYG{p}{!}\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{Color}\PYG{p}{.}\PYG{n}{Equals}\PYG{p}{(}\PYG{n}{selected2}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{Color}\PYG{p}{))} \PYG{p}{\PYGZob{}}
+			\PYG{n}{attackMenuVisible} \PYG{p}{=} \PYG{p}{!}\PYG{n}{attackMenuVisible}\PYG{p}{;}
+			\PYG{n}{atkmenu}\PYG{p}{.}\PYG{n}{SetActive}\PYG{p}{(}\PYG{n}{attackMenuVisible}\PYG{p}{);}
+			\PYG{n}{attacker}\PYG{p}{.}\PYG{n}{text} \PYG{p}{=} \PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{ProvinceName}\PYG{p}{;}
+			\PYG{n}{defender}\PYG{p}{.}\PYG{n}{text} \PYG{p}{=} \PYG{n}{selected2}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{ProvinceName}\PYG{p}{;}
+			\PYG{n}{attackerTextCount}\PYG{p}{.}\PYG{n}{text} \PYG{p}{=} \PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{TroopCount}\PYG{p}{.}\PYG{n}{ToString}\PYG{p}{();}
+			\PYG{n}{defenderTextCount}\PYG{p}{.}\PYG{n}{text} \PYG{p}{=} \PYG{n}{selected2}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{TroopCount}\PYG{p}{.}\PYG{n}{ToString}\PYG{p}{();}
+		\PYG{p}{\PYGZcb{}}
+	\PYG{p}{\PYGZcb{}}
+
+	\PYG{k}{void} \PYG{n+nf}{CancelButtonListener}\PYG{p}{()} \PYG{p}{\PYGZob{}}
+		\PYG{k}{for}\PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{i} \PYG{p}{=} \PYG{l+m}{0}\PYG{p}{;} \PYG{n}{i} \PYG{p}{\PYGZlt{}} \PYG{l+m}{3}\PYG{p}{;} \PYG{n}{i}\PYG{p}{++)} \PYG{p}{\PYGZob{}}
+			\PYG{n}{AttackerDie}\PYG{p}{[}\PYG{n}{i}\PYG{p}{].}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{DiceRoller}\PYG{p}{\PYGZgt{}().}\PYG{n}{SetInactive}\PYG{p}{();}
+		\PYG{p}{\PYGZcb{}}
+
+		\PYG{k}{for}\PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{j} \PYG{p}{=} \PYG{l+m}{0}\PYG{p}{;} \PYG{n}{j} \PYG{p}{\PYGZlt{}} \PYG{l+m}{2}\PYG{p}{;} \PYG{n}{j}\PYG{p}{++)} \PYG{p}{\PYGZob{}}
+			\PYG{n}{DefenderDie}\PYG{p}{[}\PYG{n}{j}\PYG{p}{].}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{DiceRoller}\PYG{p}{\PYGZgt{}().}\PYG{n}{SetInactive}\PYG{p}{();}
+
+		\PYG{p}{\PYGZcb{}}
+		\PYG{n}{attackMenuVisible} \PYG{p}{=} \PYG{k}{false}\PYG{p}{;}
+		\PYG{n}{atkmenu}\PYG{p}{.}\PYG{n}{SetActive}\PYG{p}{(}\PYG{k}{false}\PYG{p}{);}
+	\PYG{p}{\PYGZcb{}}
+
+	\PYG{k}{void} \PYG{n+nf}{DoOrDieListener}\PYG{p}{()} \PYG{p}{\PYGZob{}}
+		\PYG{c+c1}{//Calls Perform Attack until either you conquer the territory, or run out of troops, whatever comes first.}
+		\PYG{k}{while}\PYG{p}{(}\PYG{n}{attackMenuVisible}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+			\PYG{n}{PerformAttack}\PYG{p}{();}
+		\PYG{p}{\PYGZcb{}}
+	\PYG{p}{\PYGZcb{}}
+
+	\PYG{k}{void} \PYG{n+nf}{PerformAttack}\PYG{p}{()} \PYG{p}{\PYGZob{}}
+		\PYG{c+c1}{//Basic Attack Code lol}
+		\PYG{k+kt}{int} \PYG{n}{AttackerDieCount} \PYG{p}{=} \PYG{l+m}{0}\PYG{p}{;}
+		\PYG{k+kt}{int} \PYG{n}{DefenderDieCount} \PYG{p}{=} \PYG{l+m}{0}\PYG{p}{;}
+		\PYG{n}{List}\PYG{p}{\PYGZlt{}}\PYG{k+kt}{int}\PYG{p}{\PYGZgt{}} \PYG{n}{AttackerDiceRolls} \PYG{p}{=} \PYG{k}{new} \PYG{n}{List}\PYG{p}{\PYGZlt{}}\PYG{k+kt}{int}\PYG{p}{\PYGZgt{}();}
+		\PYG{n}{List}\PYG{p}{\PYGZlt{}}\PYG{k+kt}{int}\PYG{p}{\PYGZgt{}} \PYG{n}{DefenderDiceRolls} \PYG{p}{=} \PYG{k}{new} \PYG{n}{List}\PYG{p}{\PYGZlt{}}\PYG{k+kt}{int}\PYG{p}{\PYGZgt{}();}
+		\PYG{c+c1}{//Get Number of Attacker Die}
+		\PYG{k}{switch}\PYG{p}{(}\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{TroopCount}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+			\PYG{k}{case} \PYG{l+m}{1}\PYG{p}{:}
+				\PYG{n}{CancelButtonListener}\PYG{p}{();}
+				\PYG{k}{break}\PYG{p}{;}
+			\PYG{k}{case} \PYG{l+m}{2}\PYG{p}{:}
+				\PYG{c+c1}{//One Die}
+				\PYG{n}{AttackerDieCount} \PYG{p}{=} \PYG{l+m}{1}\PYG{p}{;}
+				\PYG{k}{break}\PYG{p}{;}
+			\PYG{k}{case} \PYG{l+m}{3}\PYG{p}{:}
+				\PYG{c+c1}{//Two Die}
+				\PYG{n}{AttackerDieCount} \PYG{p}{=} \PYG{l+m}{2}\PYG{p}{;}
+				\PYG{k}{break}\PYG{p}{;}
+			\PYG{k}{default}\PYG{p}{:}
+				\PYG{c+c1}{//Three Die}
+				\PYG{n}{AttackerDieCount} \PYG{p}{=} \PYG{l+m}{3}\PYG{p}{;}
+				\PYG{k}{break}\PYG{p}{;}
+		\PYG{p}{\PYGZcb{}}
+
+		\PYG{c+c1}{//Get Number of Defender Die}
+		\PYG{k}{switch}\PYG{p}{(}\PYG{n}{selected2}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{TroopCount}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+			\PYG{k}{case} \PYG{l+m}{0}\PYG{p}{:}
+				\PYG{k+kt}{string} \PYG{n}{temp} \PYG{p}{=} \PYG{n}{selected2}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{Color}\PYG{p}{;}
+				\PYG{n}{selected2}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{Color} \PYG{p}{=} \PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{Color}\PYG{p}{;}
+				\PYG{n}{selected2}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{TroopCount} \PYG{p}{=} \PYG{l+m}{1}\PYG{p}{;}
+				\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{TroopCount}\PYG{p}{\PYGZhy{}\PYGZhy{};}
+				\PYG{n}{selected2}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{Flag}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Animator}\PYG{p}{\PYGZgt{}().}\PYG{n}{SetInteger}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}team\PYGZdq{}}\PYG{p}{,} \PYG{n}{TeamColors}\PYG{p}{.}\PYG{n}{IndexOf}\PYG{p}{(}\PYG{n}{selected2}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{Color}\PYG{p}{));}
+				\PYG{n}{TeamTerritories}\PYG{p}{[}\PYG{n}{playerColors}\PYG{p}{.}\PYG{n}{IndexOf}\PYG{p}{(}\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{Color}\PYG{p}{)].}\PYG{n}{Add}\PYG{p}{(}\PYG{n}{selected2}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}());}
+				\PYG{n}{TeamTerritories}\PYG{p}{[}\PYG{n}{playerColors}\PYG{p}{.}\PYG{n}{IndexOf}\PYG{p}{(}\PYG{n}{temp}\PYG{p}{)].}\PYG{n}{Remove}\PYG{p}{(}\PYG{n}{selected2}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}());}
+				\PYG{n}{CancelButtonListener}\PYG{p}{();}
+				\PYG{k}{if}\PYG{p}{(}\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{TroopCount} \PYG{p}{\PYGZgt{}} \PYG{l+m}{1}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+					\PYG{n}{ReinforceSetup}\PYG{p}{();}
+				\PYG{p}{\PYGZcb{}}
+				\PYG{k}{break}\PYG{p}{;}
+			\PYG{k}{case} \PYG{l+m}{1}\PYG{p}{:}
+				\PYG{n}{DefenderDieCount} \PYG{p}{=} \PYG{l+m}{1}\PYG{p}{;}
+				\PYG{k}{break}\PYG{p}{;}
+			\PYG{k}{default}\PYG{p}{:}
+				\PYG{n}{DefenderDieCount} \PYG{p}{=} \PYG{l+m}{2}\PYG{p}{;}
+				\PYG{k}{break}\PYG{p}{;}
+		\PYG{p}{\PYGZcb{}}
+
+		\PYG{k}{for}\PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{i} \PYG{p}{=} \PYG{n}{AttackerDieCount}\PYG{p}{;} \PYG{n}{i} \PYG{p}{\PYGZlt{}} \PYG{l+m}{3}\PYG{p}{;} \PYG{n}{i}\PYG{p}{++)} \PYG{p}{\PYGZob{}}
+			\PYG{n}{AttackerDie}\PYG{p}{[}\PYG{n}{i}\PYG{p}{].}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{DiceRoller}\PYG{p}{\PYGZgt{}().}\PYG{n}{SetInactive}\PYG{p}{();}
+		\PYG{p}{\PYGZcb{}}
+
+		\PYG{k}{for} \PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{i} \PYG{p}{=} \PYG{n}{DefenderDieCount}\PYG{p}{;} \PYG{n}{i} \PYG{p}{\PYGZlt{}} \PYG{l+m}{2}\PYG{p}{;} \PYG{n}{i}\PYG{p}{++)} \PYG{p}{\PYGZob{}}
+			\PYG{n}{DefenderDie}\PYG{p}{[}\PYG{n}{i}\PYG{p}{].}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{DiceRoller}\PYG{p}{\PYGZgt{}().}\PYG{n}{SetInactive}\PYG{p}{();}
+		\PYG{p}{\PYGZcb{}}
+
+		\PYG{k}{for}\PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{i} \PYG{p}{=} \PYG{l+m}{0}\PYG{p}{;} \PYG{n}{i} \PYG{p}{\PYGZlt{}} \PYG{n}{AttackerDieCount}\PYG{p}{;} \PYG{n}{i}\PYG{p}{++)} \PYG{p}{\PYGZob{}}
+			\PYG{n}{AttackerDiceRolls}\PYG{p}{.}\PYG{n}{Add}\PYG{p}{(}\PYG{n}{AttackerDie}\PYG{p}{[}\PYG{n}{i}\PYG{p}{].}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{DiceRoller}\PYG{p}{\PYGZgt{}().}\PYG{n}{Roll}\PYG{p}{());}
+		\PYG{p}{\PYGZcb{}}
+
+		\PYG{k}{for}\PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{i} \PYG{p}{=} \PYG{l+m}{0}\PYG{p}{;} \PYG{n}{i} \PYG{p}{\PYGZlt{}} \PYG{n}{DefenderDieCount}\PYG{p}{;} \PYG{n}{i}\PYG{p}{++)} \PYG{p}{\PYGZob{}}
+			\PYG{n}{DefenderDiceRolls}\PYG{p}{.}\PYG{n}{Add}\PYG{p}{(}\PYG{n}{DefenderDie}\PYG{p}{[}\PYG{n}{i}\PYG{p}{].}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{DiceRoller}\PYG{p}{\PYGZgt{}().}\PYG{n}{Roll}\PYG{p}{());}
+		\PYG{p}{\PYGZcb{}}
+
+		\PYG{n}{AttackerDiceRolls}\PYG{p}{.}\PYG{n}{Sort}\PYG{p}{();}
+		\PYG{n}{AttackerDiceRolls}\PYG{p}{.}\PYG{n}{Reverse}\PYG{p}{();}
+		\PYG{n}{DefenderDiceRolls}\PYG{p}{.}\PYG{n}{Sort}\PYG{p}{();}
+		\PYG{n}{DefenderDiceRolls}\PYG{p}{.}\PYG{n}{Reverse}\PYG{p}{();}
+
+		\PYG{k}{while}\PYG{p}{(!(}\PYG{n}{AttackerDiceRolls}\PYG{p}{.}\PYG{n}{Count} \PYG{p}{==} \PYG{l+m}{0}\PYG{p}{)} \PYG{p}{\PYGZam{}\PYGZam{}} \PYG{p}{!(}\PYG{n}{DefenderDiceRolls}\PYG{p}{.}\PYG{n}{Count} \PYG{p}{==} \PYG{l+m}{0}\PYG{p}{))} \PYG{p}{\PYGZob{}}
+			\PYG{k}{if}\PYG{p}{(}\PYG{n}{DefenderDiceRolls}\PYG{p}{[}\PYG{l+m}{0}\PYG{p}{]} \PYG{p}{\PYGZgt{}=} \PYG{n}{AttackerDiceRolls}\PYG{p}{[}\PYG{l+m}{0}\PYG{p}{])} \PYG{p}{\PYGZob{}}
+				\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{TroopCount}\PYG{p}{\PYGZhy{}\PYGZhy{};}
+				\PYG{n}{attackerTextCount}\PYG{p}{.}\PYG{n}{text} \PYG{p}{=} \PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{TroopCount}\PYG{p}{.}\PYG{n}{ToString}\PYG{p}{();}
+			\PYG{p}{\PYGZcb{}} \PYG{k}{else} \PYG{p}{\PYGZob{}}
+				\PYG{n}{selected2}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{TroopCount}\PYG{p}{\PYGZhy{}\PYGZhy{};}
+				\PYG{n}{defenderTextCount}\PYG{p}{.}\PYG{n}{text} \PYG{p}{=} \PYG{n}{selected2}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{TroopCount}\PYG{p}{.}\PYG{n}{ToString}\PYG{p}{();}
+			\PYG{p}{\PYGZcb{}}
+			\PYG{n}{AttackerDiceRolls}\PYG{p}{.}\PYG{n}{RemoveAt}\PYG{p}{(}\PYG{l+m}{0}\PYG{p}{);}
+			\PYG{n}{DefenderDiceRolls}\PYG{p}{.}\PYG{n}{RemoveAt}\PYG{p}{(}\PYG{l+m}{0}\PYG{p}{);}
+		\PYG{p}{\PYGZcb{}}
+	\PYG{p}{\PYGZcb{}}
+
+	\PYG{c+c1}{// Troop Transfer/ Reinforce Mechanism}
+
+	\PYG{k}{public} \PYG{k}{void} \PYG{n+nf}{ReinforceSetup}\PYG{p}{()} \PYG{p}{\PYGZob{}}
+		\PYG{k}{if} \PYG{p}{(}\PYG{n}{CheckForPath}\PYG{p}{(}\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}(),} \PYG{n}{selected2}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}())} \PYG{p}{\PYGZam{}\PYGZam{}} \PYG{n}{selected2}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{Color}\PYG{p}{.}\PYG{n}{Equals}\PYG{p}{(}\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{Color}\PYG{p}{))} \PYG{p}{\PYGZob{}}
+			\PYG{n}{reinforcementPerformedThisTurn} \PYG{p}{=} \PYG{k}{true}\PYG{p}{;}
+			\PYG{n}{reinforceMenuVisible} \PYG{p}{=} \PYG{k}{true}\PYG{p}{;}
+			\PYG{n}{renMenu}\PYG{p}{.}\PYG{n}{SetActive}\PYG{p}{(}\PYG{k}{true}\PYG{p}{);}
+			\PYG{n}{ReinforceFrom}\PYG{p}{.}\PYG{n}{text} \PYG{p}{=} \PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{ProvinceName}\PYG{p}{;}
+			\PYG{n}{ReinforceTo}\PYG{p}{.}\PYG{n}{text} \PYG{p}{=} \PYG{n}{selected2}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{ProvinceName}\PYG{p}{;}
+			\PYG{n}{FromTerritoryTemp} \PYG{p}{=} \PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{TroopCount} \PYG{p}{\PYGZhy{}} \PYG{l+m}{1}\PYG{p}{;}
+			\PYG{n}{ToTerritoryTemp} \PYG{p}{=} \PYG{l+m}{0}\PYG{p}{;}
+			\PYG{n}{ReinforceFromCount}\PYG{p}{.}\PYG{n}{text} \PYG{p}{=} \PYG{p}{(}\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{TroopCount} \PYG{p}{\PYGZhy{}} \PYG{n}{ToTerritoryTemp}\PYG{p}{).}\PYG{n}{ToString}\PYG{p}{();}
+			\PYG{n}{ReinforceToCount}\PYG{p}{.}\PYG{n}{text} \PYG{p}{=} \PYG{n}{selected2}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{TroopCount}\PYG{p}{.}\PYG{n}{ToString}\PYG{p}{();}
+		\PYG{p}{\PYGZcb{}}
+	\PYG{p}{\PYGZcb{}}
+
+	\PYG{k}{public} \PYG{k}{void} \PYG{n+nf}{ReinforceIncrement1}\PYG{p}{()} \PYG{p}{\PYGZob{}}
+		\PYG{k}{if} \PYG{p}{(}\PYG{n}{FromTerritoryTemp} \PYG{p}{\PYGZgt{}=} \PYG{l+m}{1}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+			\PYG{n}{FromTerritoryTemp} \PYG{p}{\PYGZhy{}=} \PYG{l+m}{1}\PYG{p}{;}
+			\PYG{n}{ToTerritoryTemp}\PYG{p}{++;}
+			\PYG{n}{ReinforceFromCount}\PYG{p}{.}\PYG{n}{text} \PYG{p}{=} \PYG{p}{(}\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{TroopCount} \PYG{p}{\PYGZhy{}} \PYG{n}{ToTerritoryTemp}\PYG{p}{).}\PYG{n}{ToString}\PYG{p}{();}
+			\PYG{n}{ReinforceToCount}\PYG{p}{.}\PYG{n}{text} \PYG{p}{=} \PYG{p}{(}\PYG{n}{selected2}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{TroopCount} \PYG{p}{+} \PYG{n}{ToTerritoryTemp}\PYG{p}{).}\PYG{n}{ToString}\PYG{p}{();}
+		\PYG{p}{\PYGZcb{}}
+	\PYG{p}{\PYGZcb{}}
+
+	\PYG{k}{public} \PYG{k}{void} \PYG{n+nf}{ReinforceDecrement1}\PYG{p}{()} \PYG{p}{\PYGZob{}}
+		\PYG{k}{if} \PYG{p}{(}\PYG{n}{ToTerritoryTemp} \PYG{p}{\PYGZgt{}=} \PYG{l+m}{1}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+			\PYG{n}{ToTerritoryTemp} \PYG{p}{\PYGZhy{}=} \PYG{l+m}{1}\PYG{p}{;}
+			\PYG{n}{FromTerritoryTemp}\PYG{p}{++;}
+			\PYG{n}{ReinforceFromCount}\PYG{p}{.}\PYG{n}{text} \PYG{p}{=} \PYG{p}{(}\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{TroopCount} \PYG{p}{\PYGZhy{}} \PYG{n}{ToTerritoryTemp}\PYG{p}{).}\PYG{n}{ToString}\PYG{p}{();}
+			\PYG{n}{ReinforceToCount}\PYG{p}{.}\PYG{n}{text} \PYG{p}{=} \PYG{p}{(}\PYG{n}{selected2}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{TroopCount} \PYG{p}{+} \PYG{n}{ToTerritoryTemp}\PYG{p}{).}\PYG{n}{ToString}\PYG{p}{();}
+		\PYG{p}{\PYGZcb{}}
+	\PYG{p}{\PYGZcb{}}
+
+	\PYG{k}{public} \PYG{k}{void} \PYG{n+nf}{ReinforceIncrement5}\PYG{p}{()} \PYG{p}{\PYGZob{}}
+		\PYG{k}{if} \PYG{p}{(}\PYG{n}{FromTerritoryTemp} \PYG{p}{\PYGZgt{}=} \PYG{l+m}{1}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+			\PYG{k}{if} \PYG{p}{(}\PYG{n}{FromTerritoryTemp} \PYG{p}{\PYGZgt{}=} \PYG{l+m}{5}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+				\PYG{n}{FromTerritoryTemp} \PYG{p}{\PYGZhy{}=} \PYG{l+m}{5}\PYG{p}{;}
+				\PYG{n}{ToTerritoryTemp} \PYG{p}{+=} \PYG{l+m}{5}\PYG{p}{;}
+
+			\PYG{p}{\PYGZcb{}} \PYG{k}{else} \PYG{p}{\PYGZob{}}
+				\PYG{n}{ToTerritoryTemp} \PYG{p}{+=} \PYG{n}{FromTerritoryTemp}\PYG{p}{;}
+				\PYG{n}{FromTerritoryTemp} \PYG{p}{=} \PYG{l+m}{0}\PYG{p}{;}
+			\PYG{p}{\PYGZcb{}}
+			\PYG{n}{ReinforceFromCount}\PYG{p}{.}\PYG{n}{text} \PYG{p}{=} \PYG{p}{(}\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{TroopCount} \PYG{p}{\PYGZhy{}} \PYG{n}{ToTerritoryTemp}\PYG{p}{).}\PYG{n}{ToString}\PYG{p}{();}
+			\PYG{n}{ReinforceToCount}\PYG{p}{.}\PYG{n}{text} \PYG{p}{=} \PYG{p}{(}\PYG{n}{selected2}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{TroopCount} \PYG{p}{+} \PYG{n}{ToTerritoryTemp}\PYG{p}{).}\PYG{n}{ToString}\PYG{p}{();}
+		\PYG{p}{\PYGZcb{}}
+	\PYG{p}{\PYGZcb{}}
+
+	\PYG{k}{public} \PYG{k}{void} \PYG{n+nf}{ReinforceDecrement5}\PYG{p}{()} \PYG{p}{\PYGZob{}}
+		\PYG{k}{if} \PYG{p}{(}\PYG{n}{ToTerritoryTemp} \PYG{p}{\PYGZgt{}=} \PYG{l+m}{1}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+			\PYG{k}{if} \PYG{p}{(}\PYG{n}{ToTerritoryTemp} \PYG{p}{\PYGZgt{}=} \PYG{l+m}{5}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+				\PYG{n}{ToTerritoryTemp} \PYG{p}{\PYGZhy{}=} \PYG{l+m}{5}\PYG{p}{;}
+				\PYG{n}{FromTerritoryTemp} \PYG{p}{+=} \PYG{l+m}{5}\PYG{p}{;}
+
+			\PYG{p}{\PYGZcb{}}
+			\PYG{k}{else} \PYG{p}{\PYGZob{}}
+				\PYG{n}{FromTerritoryTemp} \PYG{p}{+=} \PYG{n}{ToTerritoryTemp}\PYG{p}{;}
+				\PYG{n}{ToTerritoryTemp} \PYG{p}{=} \PYG{l+m}{0}\PYG{p}{;}
+			\PYG{p}{\PYGZcb{}}
+			\PYG{n}{ReinforceFromCount}\PYG{p}{.}\PYG{n}{text} \PYG{p}{=} \PYG{p}{(}\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{TroopCount} \PYG{p}{\PYGZhy{}} \PYG{n}{ToTerritoryTemp}\PYG{p}{).}\PYG{n}{ToString}\PYG{p}{();}
+			\PYG{n}{ReinforceToCount}\PYG{p}{.}\PYG{n}{text} \PYG{p}{=} \PYG{p}{(}\PYG{n}{selected2}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{TroopCount} \PYG{p}{+} \PYG{n}{ToTerritoryTemp}\PYG{p}{).}\PYG{n}{ToString}\PYG{p}{();}
+		\PYG{p}{\PYGZcb{}}
+	\PYG{p}{\PYGZcb{}}
+
+	\PYG{k}{public} \PYG{k}{void} \PYG{n+nf}{ReinforceIncrementAB1}\PYG{p}{()} \PYG{p}{\PYGZob{}}
+		\PYG{n}{ToTerritoryTemp} \PYG{p}{+=} \PYG{n}{FromTerritoryTemp}\PYG{p}{;}
+		\PYG{n}{FromTerritoryTemp} \PYG{p}{=} \PYG{l+m}{0}\PYG{p}{;}
+		\PYG{n}{ReinforceFromCount}\PYG{p}{.}\PYG{n}{text} \PYG{p}{=} \PYG{p}{(}\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{TroopCount} \PYG{p}{\PYGZhy{}} \PYG{n}{ToTerritoryTemp}\PYG{p}{).}\PYG{n}{ToString}\PYG{p}{();}
+		\PYG{n}{ReinforceToCount}\PYG{p}{.}\PYG{n}{text} \PYG{p}{=} \PYG{p}{(}\PYG{n}{selected2}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{TroopCount} \PYG{p}{+} \PYG{n}{ToTerritoryTemp}\PYG{p}{).}\PYG{n}{ToString}\PYG{p}{();}
+	\PYG{p}{\PYGZcb{}}
+
+	\PYG{k}{public} \PYG{k}{void} \PYG{n+nf}{ReinforceDecrementAB1}\PYG{p}{()} \PYG{p}{\PYGZob{}}
+		\PYG{n}{FromTerritoryTemp} \PYG{p}{+=} \PYG{n}{ToTerritoryTemp}\PYG{p}{;}
+		\PYG{n}{ToTerritoryTemp} \PYG{p}{=} \PYG{l+m}{0}\PYG{p}{;}
+		\PYG{n}{ReinforceFromCount}\PYG{p}{.}\PYG{n}{text} \PYG{p}{=} \PYG{p}{(}\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{TroopCount} \PYG{p}{\PYGZhy{}} \PYG{n}{ToTerritoryTemp}\PYG{p}{).}\PYG{n}{ToString}\PYG{p}{();}
+		\PYG{n}{ReinforceToCount}\PYG{p}{.}\PYG{n}{text} \PYG{p}{=} \PYG{p}{(}\PYG{n}{selected2}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{TroopCount} \PYG{p}{+} \PYG{n}{ToTerritoryTemp}\PYG{p}{).}\PYG{n}{ToString}\PYG{p}{();}
+	\PYG{p}{\PYGZcb{}}
+
+	\PYG{k}{public} \PYG{k}{void} \PYG{n+nf}{CancelReinforce}\PYG{p}{()} \PYG{p}{\PYGZob{}}
+		\PYG{c+c1}{//Close without making change}
+		\PYG{n}{reinforceMenuVisible} \PYG{p}{=} \PYG{k}{false}\PYG{p}{;}
+		\PYG{n}{renMenu}\PYG{p}{.}\PYG{n}{SetActive}\PYG{p}{(}\PYG{k}{false}\PYG{p}{);}
+	\PYG{p}{\PYGZcb{}}
+
+	\PYG{k}{public} \PYG{k}{void} \PYG{n+nf}{ReinforceConfirm}\PYG{p}{()} \PYG{p}{\PYGZob{}}
+		\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{TroopCount} \PYG{p}{\PYGZhy{}=} \PYG{n}{ToTerritoryTemp}\PYG{p}{;}
+		\PYG{n}{selected2}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{TroopCount} \PYG{p}{+=} \PYG{n}{ToTerritoryTemp}\PYG{p}{;}
+
+		\PYG{n}{FromTerritoryTemp} \PYG{p}{=} \PYG{l+m}{0}\PYG{p}{;}
+		\PYG{n}{ToTerritoryTemp} \PYG{p}{=} \PYG{l+m}{0}\PYG{p}{;}
+		\PYG{n}{reinforceMenuVisible} \PYG{p}{=} \PYG{k}{false}\PYG{p}{;}
+		\PYG{n}{renMenu}\PYG{p}{.}\PYG{n}{SetActive}\PYG{p}{(}\PYG{k}{false}\PYG{p}{);}
+	\PYG{p}{\PYGZcb{}}
+
+	\PYG{c+c1}{//Main Menu}
+	\PYG{k}{public} \PYG{k}{void} \PYG{n+nf}{TwoPlayer}\PYG{p}{()} \PYG{p}{\PYGZob{}}
+		\PYG{n}{numberOfActivePlayers} \PYG{p}{=} \PYG{l+m}{2}\PYG{p}{;}
+		\PYG{n}{mainMenu}\PYG{p}{.}\PYG{n}{SetActive}\PYG{p}{(}\PYG{k}{false}\PYG{p}{);}
+		\PYG{n}{mainMenuVisible} \PYG{p}{=} \PYG{k}{false}\PYG{p}{;}
+		\PYG{n}{statusMenu}\PYG{p}{.}\PYG{n}{SetActive}\PYG{p}{(}\PYG{k}{true}\PYG{p}{);}
+		\PYG{n}{GameSetup}\PYG{p}{();}
+	\PYG{p}{\PYGZcb{}}
+
+	\PYG{k}{public} \PYG{k}{void} \PYG{n+nf}{ThreePlayers}\PYG{p}{()} \PYG{p}{\PYGZob{}}
+		\PYG{n}{numberOfActivePlayers} \PYG{p}{=} \PYG{l+m}{3}\PYG{p}{;}
+		\PYG{n}{mainMenu}\PYG{p}{.}\PYG{n}{SetActive}\PYG{p}{(}\PYG{k}{false}\PYG{p}{);}
+		\PYG{n}{mainMenuVisible} \PYG{p}{=} \PYG{k}{false}\PYG{p}{;}
+		\PYG{n}{statusMenu}\PYG{p}{.}\PYG{n}{SetActive}\PYG{p}{(}\PYG{k}{true}\PYG{p}{);}
+		\PYG{n}{GameSetup}\PYG{p}{();}
+	\PYG{p}{\PYGZcb{}}
+
+	\PYG{k}{public} \PYG{k}{void} \PYG{n+nf}{FourPlayers}\PYG{p}{()} \PYG{p}{\PYGZob{}}
+		\PYG{n}{numberOfActivePlayers} \PYG{p}{=} \PYG{l+m}{4}\PYG{p}{;}
+		\PYG{n}{mainMenu}\PYG{p}{.}\PYG{n}{SetActive}\PYG{p}{(}\PYG{k}{false}\PYG{p}{);}
+		\PYG{n}{mainMenuVisible} \PYG{p}{=} \PYG{k}{false}\PYG{p}{;}
+		\PYG{n}{statusMenu}\PYG{p}{.}\PYG{n}{SetActive}\PYG{p}{(}\PYG{k}{true}\PYG{p}{);}
+		\PYG{n}{GameSetup}\PYG{p}{();}
+	\PYG{p}{\PYGZcb{}}
+
+	\PYG{k}{public} \PYG{k}{void} \PYG{n+nf}{FivePlayers}\PYG{p}{()} \PYG{p}{\PYGZob{}}
+		\PYG{n}{numberOfActivePlayers} \PYG{p}{=} \PYG{l+m}{5}\PYG{p}{;}
+		\PYG{n}{mainMenu}\PYG{p}{.}\PYG{n}{SetActive}\PYG{p}{(}\PYG{k}{false}\PYG{p}{);}
+		\PYG{n}{mainMenuVisible} \PYG{p}{=} \PYG{k}{false}\PYG{p}{;}
+		\PYG{n}{statusMenu}\PYG{p}{.}\PYG{n}{SetActive}\PYG{p}{(}\PYG{k}{true}\PYG{p}{);}
+		\PYG{n}{GameSetup}\PYG{p}{();}
+	\PYG{p}{\PYGZcb{}}
+
+	\PYG{k}{public} \PYG{k}{void} \PYG{n+nf}{SixPlayers}\PYG{p}{()} \PYG{p}{\PYGZob{}}
+		\PYG{n}{numberOfActivePlayers} \PYG{p}{=} \PYG{l+m}{6}\PYG{p}{;}
+		\PYG{n}{mainMenu}\PYG{p}{.}\PYG{n}{SetActive}\PYG{p}{(}\PYG{k}{false}\PYG{p}{);}
+		\PYG{n}{mainMenuVisible} \PYG{p}{=} \PYG{k}{false}\PYG{p}{;}
+		\PYG{n}{statusMenu}\PYG{p}{.}\PYG{n}{SetActive}\PYG{p}{(}\PYG{k}{true}\PYG{p}{);}
+		\PYG{n}{GameSetup}\PYG{p}{();}
+	\PYG{p}{\PYGZcb{}}
+
+	\PYG{k}{public} \PYG{k}{void} \PYG{n+nf}{QuitGame}\PYG{p}{()} \PYG{p}{\PYGZob{}}
+		\PYG{n}{Application}\PYG{p}{.}\PYG{n}{Quit}\PYG{p}{();}
+	\PYG{p}{\PYGZcb{}}
+
+	\PYG{c+c1}{//General Game Mechanics}
+
+	\PYG{k}{public} \PYG{n}{GameObject} \PYG{n+nf}{GetTerritoryClick}\PYG{p}{()} \PYG{p}{\PYGZob{}}
+		\PYG{n}{Vector2} \PYG{n}{worldPoint} \PYG{p}{=} \PYG{n}{Camera}\PYG{p}{.}\PYG{n}{main}\PYG{p}{.}\PYG{n}{ScreenToWorldPoint}\PYG{p}{(}\PYG{n}{Input}\PYG{p}{.}\PYG{n}{mousePosition}\PYG{p}{);}
+		\PYG{n}{RaycastHit2D} \PYG{n}{hit} \PYG{p}{=} \PYG{n}{Physics2D}\PYG{p}{.}\PYG{n}{Raycast}\PYG{p}{(}\PYG{n}{worldPoint}\PYG{p}{,} \PYG{n}{Vector2}\PYG{p}{.}\PYG{n}{zero}\PYG{p}{);}
+		\PYG{k}{if}\PYG{p}{(}\PYG{n}{hit}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+			\PYG{k}{if} \PYG{p}{(}\PYG{n}{hit}\PYG{p}{.}\PYG{n}{collider}\PYG{p}{.}\PYG{n}{gameObject}\PYG{p}{.}\PYG{n}{layer} \PYG{p}{==} \PYG{n}{LayerMask}\PYG{p}{.}\PYG{n}{NameToLayer}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Provinces\PYGZdq{}}\PYG{p}{))} \PYG{p}{\PYGZob{}}
+				\PYG{k}{return} \PYG{n}{hit}\PYG{p}{.}\PYG{n}{collider}\PYG{p}{.}\PYG{n}{gameObject}\PYG{p}{;}
+			\PYG{p}{\PYGZcb{}}
+		\PYG{p}{\PYGZcb{}}
+		\PYG{k}{return} \PYG{k}{null}\PYG{p}{;}
+	\PYG{p}{\PYGZcb{}}
+
+	\PYG{k}{public} \PYG{k+kt}{bool} \PYG{n+nf}{CheckAdjacency}\PYG{p}{(}\PYG{n}{Province} \PYG{n}{p1}\PYG{p}{,} \PYG{n}{Province} \PYG{n}{p2}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+		\PYG{c+c1}{//this is for attacking}
+		\PYG{k}{for}\PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{i} \PYG{p}{=} \PYG{l+m}{0}\PYG{p}{;} \PYG{n}{i} \PYG{p}{\PYGZlt{}} \PYG{n}{p1}\PYG{p}{.}\PYG{n}{neighbors}\PYG{p}{.}\PYG{n}{Length}\PYG{p}{;} \PYG{n}{i}\PYG{p}{++)} \PYG{p}{\PYGZob{}}
+			\PYG{k}{if} \PYG{p}{(}\PYG{n}{p1}\PYG{p}{.}\PYG{n}{neighbors}\PYG{p}{[}\PYG{n}{i}\PYG{p}{].}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{Equals}\PYG{p}{(}\PYG{n}{p2}\PYG{p}{))} \PYG{p}{\PYGZob{}}
+				\PYG{k}{return} \PYG{k}{true}\PYG{p}{;}
+			\PYG{p}{\PYGZcb{}}
+		\PYG{p}{\PYGZcb{}}
+		\PYG{k}{return} \PYG{k}{false}\PYG{p}{;}
+	\PYG{p}{\PYGZcb{}}
+
+	\PYG{k}{public} \PYG{k+kt}{bool} \PYG{n+nf}{CheckForPath}\PYG{p}{(}\PYG{n}{Province} \PYG{n}{p1}\PYG{p}{,} \PYG{n}{Province} \PYG{n}{p2}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+		\PYG{n}{OpenList}\PYG{p}{.}\PYG{n}{Add}\PYG{p}{(}\PYG{n}{p1}\PYG{p}{);}
+		\PYG{k}{return} \PYG{n+nf}{CheckForPath}\PYG{p}{(}\PYG{n}{p2}\PYG{p}{);}
+	\PYG{p}{\PYGZcb{}}
+
+	\PYG{k}{public} \PYG{k+kt}{bool} \PYG{n+nf}{CheckForPath}\PYG{p}{(}\PYG{n}{Province} \PYG{n}{p2}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+		\PYG{c+c1}{//this is for reinforcement}
+		\PYG{n}{Province} \PYG{n}{temp}\PYG{p}{;}
+		\PYG{n}{Province} \PYG{n}{temp2}\PYG{p}{;}
+		\PYG{k}{while}\PYG{p}{(}\PYG{n}{OpenList}\PYG{p}{.}\PYG{n}{Count} \PYG{p}{!=} \PYG{l+m}{0}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+			\PYG{n}{temp} \PYG{p}{=} \PYG{n}{OpenList}\PYG{p}{[}\PYG{l+m}{0}\PYG{p}{];}
+			\PYG{n}{OpenList}\PYG{p}{.}\PYG{n}{Remove}\PYG{p}{(}\PYG{n}{temp}\PYG{p}{);}
+			\PYG{n}{ClosedList}\PYG{p}{.}\PYG{n}{Add}\PYG{p}{(}\PYG{n}{temp}\PYG{p}{);}
+			\PYG{k}{for} \PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{i} \PYG{p}{=} \PYG{l+m}{0}\PYG{p}{;} \PYG{n}{i} \PYG{p}{\PYGZlt{}} \PYG{n}{temp}\PYG{p}{.}\PYG{n}{neighbors}\PYG{p}{.}\PYG{n}{Length}\PYG{p}{;} \PYG{n}{i}\PYG{p}{++)} \PYG{p}{\PYGZob{}}
+				\PYG{n}{temp2} \PYG{p}{=} \PYG{n}{temp}\PYG{p}{.}\PYG{n}{neighbors}\PYG{p}{[}\PYG{n}{i}\PYG{p}{].}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}();}
+				\PYG{k}{if}\PYG{p}{(}\PYG{n}{temp2}\PYG{p}{.}\PYG{n}{Color}\PYG{p}{.}\PYG{n}{Equals}\PYG{p}{(}\PYG{n}{temp}\PYG{p}{.}\PYG{n}{Color}\PYG{p}{))} \PYG{p}{\PYGZob{}}
+					\PYG{k}{if} \PYG{p}{(}\PYG{n}{temp2}\PYG{p}{.}\PYG{n}{Equals}\PYG{p}{(}\PYG{n}{p2}\PYG{p}{))} \PYG{p}{\PYGZob{}}
+						\PYG{n}{OpenList}\PYG{p}{.}\PYG{n}{Clear}\PYG{p}{();}
+						\PYG{n}{ClosedList}\PYG{p}{.}\PYG{n}{Clear}\PYG{p}{();}
+						\PYG{k}{return} \PYG{k}{true}\PYG{p}{;}
+					\PYG{p}{\PYGZcb{}} \PYG{k}{else} \PYG{k}{if} \PYG{p}{(}\PYG{n}{ClosedList}\PYG{p}{.}\PYG{n}{Contains}\PYG{p}{(}\PYG{n}{temp2}\PYG{p}{)} \PYG{p}{!=} \PYG{k}{true}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+						\PYG{n}{OpenList}\PYG{p}{.}\PYG{n}{Add}\PYG{p}{(}\PYG{n}{temp2}\PYG{p}{);}
+					\PYG{p}{\PYGZcb{}}
+				\PYG{p}{\PYGZcb{}}
+			\PYG{p}{\PYGZcb{}}
+		\PYG{p}{\PYGZcb{}}
+		\PYG{n}{OpenList}\PYG{p}{.}\PYG{n}{Clear}\PYG{p}{();}
+		\PYG{n}{ClosedList}\PYG{p}{.}\PYG{n}{Clear}\PYG{p}{();}
+		\PYG{k}{return} \PYG{k}{false}\PYG{p}{;}
+	\PYG{p}{\PYGZcb{}}
+
+	\PYG{k}{public} \PYG{k}{void} \PYG{n+nf}{DebugEval}\PYG{p}{()} \PYG{p}{\PYGZob{}}
+		\PYG{k}{if} \PYG{p}{(}\PYG{n}{Input}\PYG{p}{.}\PYG{n}{GetKeyDown}\PYG{p}{(}\PYG{n}{KeyCode}\PYG{p}{.}\PYG{n}{E}\PYG{p}{))} \PYG{p}{\PYGZob{}}
+			\PYG{n}{GameSetup}\PYG{p}{();}
+		\PYG{p}{\PYGZcb{}}
+
+
+		\PYG{k}{if} \PYG{p}{(}\PYG{n}{Input}\PYG{p}{.}\PYG{n}{GetMouseButtonDown}\PYG{p}{(}\PYG{l+m}{0}\PYG{p}{)} \PYG{p}{\PYGZam{}\PYGZam{}} \PYG{p}{!}\PYG{n}{attackMenuVisible} \PYG{p}{\PYGZam{}\PYGZam{}} \PYG{p}{!}\PYG{n}{reinforceMenuVisible}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+			\PYG{n}{GameObject} \PYG{n}{temp} \PYG{p}{=} \PYG{n}{GetTerritoryClick}\PYG{p}{();}
+			\PYG{k}{if} \PYG{p}{(}\PYG{n}{temp} \PYG{p}{!=} \PYG{k}{null}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+				\PYG{k}{if} \PYG{p}{(}\PYG{n}{selected} \PYG{p}{!=} \PYG{k}{null}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+					\PYG{k}{if} \PYG{p}{(}\PYG{n}{temp} \PYG{p}{!=} \PYG{n}{selected}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+						\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{Deselect}\PYG{p}{();}
+					\PYG{p}{\PYGZcb{}}
+				\PYG{p}{\PYGZcb{}}
+				\PYG{k}{if} \PYG{p}{(}\PYG{n}{temp} \PYG{p}{!=} \PYG{n}{selected}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+					\PYG{n}{temp}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{Select}\PYG{p}{();}
+				\PYG{p}{\PYGZcb{}}
+				\PYG{n}{selected} \PYG{p}{=} \PYG{n}{temp}\PYG{p}{;}
+				\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{TroopCount} \PYG{p}{+=} \PYG{l+m}{1}\PYG{p}{;}
+			\PYG{p}{\PYGZcb{}}
+		\PYG{p}{\PYGZcb{}}
+
+		\PYG{k}{if} \PYG{p}{(}\PYG{n}{Input}\PYG{p}{.}\PYG{n}{GetMouseButtonDown}\PYG{p}{(}\PYG{l+m}{1}\PYG{p}{)} \PYG{p}{\PYGZam{}\PYGZam{}} \PYG{p}{!}\PYG{n}{attackMenuVisible}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+			\PYG{n}{selected2} \PYG{p}{=} \PYG{n}{GetTerritoryClick}\PYG{p}{();}
+		\PYG{p}{\PYGZcb{}}
+
+		\PYG{k}{if} \PYG{p}{(}\PYG{n}{selected} \PYG{p}{!=} \PYG{k}{null}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+			\PYG{c+cm}{/*}
+\PYG{c+cm}{			 * Neutral  0}
+\PYG{c+cm}{			 * Red      1}
+\PYG{c+cm}{			 * Blue     2}
+\PYG{c+cm}{			 * Green    3}
+\PYG{c+cm}{			 * Yellow   4}
+\PYG{c+cm}{			 * Pink     5}
+\PYG{c+cm}{			 * Brown    6}
+\PYG{c+cm}{			 */}
+			\PYG{c+c1}{//Flag Color Handling }
+			\PYG{n}{GameObject} \PYG{n}{temp} \PYG{p}{=} \PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{Flag}\PYG{p}{;}
+			\PYG{k}{if} \PYG{p}{(}\PYG{n}{temp} \PYG{p}{!=} \PYG{k}{null}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+				\PYG{k}{if} \PYG{p}{(}\PYG{n}{Input}\PYG{p}{.}\PYG{n}{GetKeyDown}\PYG{p}{(}\PYG{n}{KeyCode}\PYG{p}{.}\PYG{n}{Alpha1}\PYG{p}{))} \PYG{p}{\PYGZob{}}
+					\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{Color} \PYG{p}{=} \PYG{l+s}{\PYGZdq{}red\PYGZdq{}}\PYG{p}{;}
+					\PYG{n}{temp}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Animator}\PYG{p}{\PYGZgt{}().}\PYG{n}{SetInteger}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}team\PYGZdq{}}\PYG{p}{,} \PYG{l+m}{1}\PYG{p}{);}
+				\PYG{p}{\PYGZcb{}}
+				\PYG{k}{else} \PYG{n+nf}{if} \PYG{p}{(}\PYG{n}{Input}\PYG{p}{.}\PYG{n}{GetKeyDown}\PYG{p}{(}\PYG{n}{KeyCode}\PYG{p}{.}\PYG{n}{Alpha2}\PYG{p}{))} \PYG{p}{\PYGZob{}}
+					\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{Color} \PYG{p}{=} \PYG{l+s}{\PYGZdq{}blue\PYGZdq{}}\PYG{p}{;}
+					\PYG{n}{temp}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Animator}\PYG{p}{\PYGZgt{}().}\PYG{n}{SetInteger}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}team\PYGZdq{}}\PYG{p}{,} \PYG{l+m}{2}\PYG{p}{);}
+				\PYG{p}{\PYGZcb{}}
+				\PYG{k}{else} \PYG{n+nf}{if} \PYG{p}{(}\PYG{n}{Input}\PYG{p}{.}\PYG{n}{GetKeyDown}\PYG{p}{(}\PYG{n}{KeyCode}\PYG{p}{.}\PYG{n}{Alpha3}\PYG{p}{))} \PYG{p}{\PYGZob{}}
+					\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{Color} \PYG{p}{=} \PYG{l+s}{\PYGZdq{}green\PYGZdq{}}\PYG{p}{;}
+					\PYG{n}{temp}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Animator}\PYG{p}{\PYGZgt{}().}\PYG{n}{SetInteger}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}team\PYGZdq{}}\PYG{p}{,} \PYG{l+m}{3}\PYG{p}{);}
+				\PYG{p}{\PYGZcb{}}
+				\PYG{k}{else} \PYG{n+nf}{if} \PYG{p}{(}\PYG{n}{Input}\PYG{p}{.}\PYG{n}{GetKeyDown}\PYG{p}{(}\PYG{n}{KeyCode}\PYG{p}{.}\PYG{n}{Alpha4}\PYG{p}{))} \PYG{p}{\PYGZob{}}
+					\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{Color} \PYG{p}{=} \PYG{l+s}{\PYGZdq{}yellow\PYGZdq{}}\PYG{p}{;}
+					\PYG{n}{temp}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Animator}\PYG{p}{\PYGZgt{}().}\PYG{n}{SetInteger}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}team\PYGZdq{}}\PYG{p}{,} \PYG{l+m}{4}\PYG{p}{);}
+				\PYG{p}{\PYGZcb{}}
+				\PYG{k}{else} \PYG{n+nf}{if} \PYG{p}{(}\PYG{n}{Input}\PYG{p}{.}\PYG{n}{GetKeyDown}\PYG{p}{(}\PYG{n}{KeyCode}\PYG{p}{.}\PYG{n}{Alpha5}\PYG{p}{))} \PYG{p}{\PYGZob{}}
+					\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{Color} \PYG{p}{=} \PYG{l+s}{\PYGZdq{}pink\PYGZdq{}}\PYG{p}{;}
+					\PYG{n}{temp}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Animator}\PYG{p}{\PYGZgt{}().}\PYG{n}{SetInteger}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}team\PYGZdq{}}\PYG{p}{,} \PYG{l+m}{5}\PYG{p}{);}
+				\PYG{p}{\PYGZcb{}}
+				\PYG{k}{else} \PYG{n+nf}{if} \PYG{p}{(}\PYG{n}{Input}\PYG{p}{.}\PYG{n}{GetKeyDown}\PYG{p}{(}\PYG{n}{KeyCode}\PYG{p}{.}\PYG{n}{Alpha6}\PYG{p}{))} \PYG{p}{\PYGZob{}}
+					\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{Color} \PYG{p}{=} \PYG{l+s}{\PYGZdq{}brown\PYGZdq{}}\PYG{p}{;}
+					\PYG{n}{temp}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Animator}\PYG{p}{\PYGZgt{}().}\PYG{n}{SetInteger}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}team\PYGZdq{}}\PYG{p}{,} \PYG{l+m}{6}\PYG{p}{);}
+				\PYG{p}{\PYGZcb{}}
+				\PYG{k}{else} \PYG{n+nf}{if} \PYG{p}{(}\PYG{n}{Input}\PYG{p}{.}\PYG{n}{GetKeyDown}\PYG{p}{(}\PYG{n}{KeyCode}\PYG{p}{.}\PYG{n}{Alpha0}\PYG{p}{))} \PYG{p}{\PYGZob{}}
+					\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{Color} \PYG{p}{=} \PYG{l+s}{\PYGZdq{}neutral\PYGZdq{}}\PYG{p}{;}
+					\PYG{n}{temp}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Animator}\PYG{p}{\PYGZgt{}().}\PYG{n}{SetInteger}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}team\PYGZdq{}}\PYG{p}{,} \PYG{l+m}{0}\PYG{p}{);}
+				\PYG{p}{\PYGZcb{}}
+			\PYG{p}{\PYGZcb{}}
+
+			\PYG{k}{if} \PYG{p}{(}\PYG{n}{selected2} \PYG{p}{!=} \PYG{k}{null}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+				\PYG{c+c1}{//Adjacency Checker}
+				\PYG{k}{if} \PYG{p}{(}\PYG{n}{Input}\PYG{p}{.}\PYG{n}{GetKeyDown}\PYG{p}{(}\PYG{n}{KeyCode}\PYG{p}{.}\PYG{n}{A}\PYG{p}{))} \PYG{p}{\PYGZob{}}
+					\PYG{k}{if} \PYG{p}{(}\PYG{n}{CheckAdjacency}\PYG{p}{(}\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}(),} \PYG{n}{selected2}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}()))} \PYG{p}{\PYGZob{}}
+						\PYG{n}{Debug}\PYG{p}{.}\PYG{n}{Log}\PYG{p}{(}\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{ProvinceName} \PYG{p}{+} \PYG{l+s}{\PYGZdq{} and \PYGZdq{}} \PYG{p}{+} \PYG{n}{selected2}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{ProvinceName} \PYG{p}{+} \PYG{l+s}{\PYGZdq{} Are Adjacent!\PYGZdq{}}\PYG{p}{);}
+					\PYG{p}{\PYGZcb{}}
+					\PYG{k}{else} \PYG{p}{\PYGZob{}}
+						\PYG{n}{Debug}\PYG{p}{.}\PYG{n}{Log}\PYG{p}{(}\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{ProvinceName} \PYG{p}{+} \PYG{l+s}{\PYGZdq{} and \PYGZdq{}} \PYG{p}{+} \PYG{n}{selected2}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{ProvinceName} \PYG{p}{+} \PYG{l+s}{\PYGZdq{} Are Not Adjacent!\PYGZdq{}}\PYG{p}{);}
+					\PYG{p}{\PYGZcb{}}
+				\PYG{p}{\PYGZcb{}}
+
+				\PYG{k}{if} \PYG{p}{(}\PYG{n}{Input}\PYG{p}{.}\PYG{n}{GetKeyDown}\PYG{p}{(}\PYG{n}{KeyCode}\PYG{p}{.}\PYG{n}{D}\PYG{p}{))} \PYG{p}{\PYGZob{}}
+					\PYG{c+c1}{//Attack test}
+					\PYG{n}{AttackSetup}\PYG{p}{();}
+				\PYG{p}{\PYGZcb{}}
+
+				\PYG{c+c1}{//Check for Path (for troop reinforcements)}
+				\PYG{k}{if} \PYG{p}{(}\PYG{n}{Input}\PYG{p}{.}\PYG{n}{GetKeyDown}\PYG{p}{(}\PYG{n}{KeyCode}\PYG{p}{.}\PYG{n}{S}\PYG{p}{))} \PYG{p}{\PYGZob{}}
+					\PYG{n}{OpenList}\PYG{p}{.}\PYG{n}{Add}\PYG{p}{(}\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}());}
+					\PYG{k}{if} \PYG{p}{(}\PYG{n}{CheckForPath}\PYG{p}{(}\PYG{n}{selected2}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}()))} \PYG{p}{\PYGZob{}}
+						\PYG{n}{Debug}\PYG{p}{.}\PYG{n}{Log}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}A Path From \PYGZdq{}} \PYG{p}{+} \PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}()} \PYG{p}{+} \PYG{l+s}{\PYGZdq{} to \PYGZdq{}} \PYG{p}{+} \PYG{n}{selected2}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}()} \PYG{p}{+} \PYG{l+s}{\PYGZdq{} Exists!\PYGZdq{}}\PYG{p}{);}
+					\PYG{p}{\PYGZcb{}}
+					\PYG{k}{else} \PYG{p}{\PYGZob{}}
+						\PYG{n}{Debug}\PYG{p}{.}\PYG{n}{Log}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}A Path Does Not Exist!\PYGZdq{}}\PYG{p}{);}
+					\PYG{p}{\PYGZcb{}}
+				\PYG{p}{\PYGZcb{}}
+
+				\PYG{k}{if} \PYG{p}{(}\PYG{n}{Input}\PYG{p}{.}\PYG{n}{GetKeyDown}\PYG{p}{(}\PYG{n}{KeyCode}\PYG{p}{.}\PYG{n}{R}\PYG{p}{))} \PYG{p}{\PYGZob{}}
+					\PYG{n}{ReinforceSetup}\PYG{p}{();}
+				\PYG{p}{\PYGZcb{}}
+			\PYG{p}{\PYGZcb{}}
+		\PYG{p}{\PYGZcb{}}
+	\PYG{p}{\PYGZcb{}}
+
+	\PYG{k}{public} \PYG{k}{void} \PYG{n+nf}{GameSetup}\PYG{p}{()} \PYG{p}{\PYGZob{}}
+		\PYG{n}{List}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}} \PYG{n}{provincesCopy} \PYG{p}{=} \PYG{k}{new} \PYG{n}{List}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}(}\PYG{n}{AllProvinces}\PYG{p}{);}
+		\PYG{k}{for}\PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{i} \PYG{p}{=} \PYG{l+m}{0}\PYG{p}{;} \PYG{n}{i} \PYG{p}{\PYGZlt{}} \PYG{l+m}{6}\PYG{p}{;} \PYG{n}{i}\PYG{p}{++)} \PYG{p}{\PYGZob{}}
+			\PYG{n}{TeamTerritories}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]} \PYG{p}{=} \PYG{k}{new} \PYG{n}{List}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}();}
+		\PYG{p}{\PYGZcb{}}
+		\PYG{k+kt}{int} \PYG{n}{numOfTeams} \PYG{p}{=} \PYG{n}{numberOfActivePlayers}\PYG{p}{;}
+		\PYG{k}{if}\PYG{p}{(}\PYG{n}{numOfTeams} \PYG{p}{==} \PYG{l+m}{2}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+			\PYG{n}{numOfTeams} \PYG{p}{=} \PYG{l+m}{3}\PYG{p}{;}
+		\PYG{p}{\PYGZcb{}}
+		\PYG{k}{while}\PYG{p}{(}\PYG{n}{provincesCopy}\PYG{p}{.}\PYG{n}{Count} \PYG{p}{!=} \PYG{l+m}{0}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+			\PYG{k+kt}{int} \PYG{n}{temp} \PYG{p}{=} \PYG{n}{Random}\PYG{p}{.}\PYG{n}{Range}\PYG{p}{(}\PYG{l+m}{0}\PYG{p}{,} \PYG{n}{provincesCopy}\PYG{p}{.}\PYG{n}{Count}\PYG{p}{);}
+			\PYG{n}{provincesCopy}\PYG{p}{[}\PYG{n}{temp}\PYG{p}{].}\PYG{n}{Color} \PYG{p}{=} \PYG{n}{playerColors}\PYG{p}{[}\PYG{n}{currentPlayer}\PYG{p}{];}
+			\PYG{n}{provincesCopy}\PYG{p}{[}\PYG{n}{temp}\PYG{p}{].}\PYG{n}{Flag}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Animator}\PYG{p}{\PYGZgt{}().}\PYG{n}{SetInteger}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}team\PYGZdq{}}\PYG{p}{,} \PYG{n}{TeamColors}\PYG{p}{.}\PYG{n}{IndexOf}\PYG{p}{(}\PYG{n}{playerColors}\PYG{p}{[}\PYG{n}{currentPlayer}\PYG{p}{]));}
+			\PYG{n}{TeamTerritories}\PYG{p}{[}\PYG{n}{currentPlayer}\PYG{p}{].}\PYG{n}{Add}\PYG{p}{(}\PYG{n}{provincesCopy}\PYG{p}{[}\PYG{n}{temp}\PYG{p}{]);}
+			\PYG{n}{provincesCopy}\PYG{p}{[}\PYG{n}{temp}\PYG{p}{].}\PYG{n}{TroopCount} \PYG{p}{=} \PYG{l+m}{1}\PYG{p}{;}
+			\PYG{n}{provincesCopy}\PYG{p}{.}\PYG{n}{RemoveAt}\PYG{p}{(}\PYG{n}{temp}\PYG{p}{);}
+			\PYG{k}{if}\PYG{p}{(}\PYG{n}{currentPlayer} \PYG{p}{==} \PYG{p}{(}\PYG{n}{numOfTeams} \PYG{p}{\PYGZhy{}} \PYG{l+m}{1}\PYG{p}{))} \PYG{p}{\PYGZob{}}
+				\PYG{n}{currentPlayer} \PYG{p}{=} \PYG{l+m}{0}\PYG{p}{;}
+			\PYG{p}{\PYGZcb{}} \PYG{k}{else} \PYG{p}{\PYGZob{}}
+				\PYG{n}{currentPlayer}\PYG{p}{++;}
+			\PYG{p}{\PYGZcb{}}
+		\PYG{p}{\PYGZcb{}}
+
+		\PYG{k}{switch}\PYG{p}{(}\PYG{n}{numberOfActivePlayers}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+			\PYG{k}{case} \PYG{l+m}{2}\PYG{p}{:}
+				\PYG{n}{numberOfTroopsToPlace} \PYG{p}{=} \PYG{l+m}{26}\PYG{p}{;}
+				\PYG{k}{break}\PYG{p}{;}
+			\PYG{k}{case} \PYG{l+m}{3}\PYG{p}{:}
+				\PYG{n}{numberOfTroopsToPlace} \PYG{p}{=} \PYG{l+m}{21}\PYG{p}{;}
+				\PYG{k}{break}\PYG{p}{;}
+			\PYG{k}{case} \PYG{l+m}{4}\PYG{p}{:}
+				\PYG{n}{numberOfTroopsToPlace} \PYG{p}{=} \PYG{l+m}{19}\PYG{p}{;}
+				\PYG{k}{break}\PYG{p}{;}
+			\PYG{k}{case} \PYG{l+m}{5}\PYG{p}{:}
+				\PYG{n}{numberOfTroopsToPlace} \PYG{p}{=} \PYG{l+m}{16}\PYG{p}{;}
+				\PYG{k}{break}\PYG{p}{;}
+			\PYG{k}{case} \PYG{l+m}{6}\PYG{p}{:}
+				\PYG{n}{numberOfTroopsToPlace} \PYG{p}{=} \PYG{l+m}{13}\PYG{p}{;}
+				\PYG{k}{break}\PYG{p}{;}
+		\PYG{p}{\PYGZcb{}}
+		\PYG{n}{currStage} \PYG{p}{=} \PYG{n}{Stages}\PYG{p}{.}\PYG{n}{GAME\PYGZus{}SETUP}\PYG{p}{;}
+		\PYG{n}{currentPlayer} \PYG{p}{=} \PYG{l+m}{0}\PYG{p}{;}
+	\PYG{p}{\PYGZcb{}}
+
+	\PYG{k}{public} \PYG{k}{void} \PYG{n+nf}{NewTurn}\PYG{p}{()} \PYG{p}{\PYGZob{}}
+		\PYG{k}{if}\PYG{p}{(}\PYG{n}{selected}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+			\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{Deselect}\PYG{p}{();}
+		\PYG{p}{\PYGZcb{}}
+		\PYG{k}{if}\PYG{p}{(}\PYG{n}{TeamTerritories}\PYG{p}{[}\PYG{n}{currentPlayer}\PYG{p}{].}\PYG{n}{Count} \PYG{p}{==} \PYG{l+m}{42}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+			\PYG{n}{MenuText}\PYG{p}{.}\PYG{n}{text} \PYG{p}{=} \PYG{n}{playerColors}\PYG{p}{[}\PYG{n}{currentPlayer}\PYG{p}{].}\PYG{n}{ToUpper}\PYG{p}{()} \PYG{p}{+} \PYG{l+s}{\PYGZdq{} Won the Game!\PYGZdq{}}\PYG{p}{;}
+			\PYG{n}{mainMenuVisible} \PYG{p}{=} \PYG{k}{true}\PYG{p}{;}
+			\PYG{n}{mainMenu}\PYG{p}{.}\PYG{n}{SetActive}\PYG{p}{(}\PYG{k}{true}\PYG{p}{);}
+			\PYG{n}{statusMenu}\PYG{p}{.}\PYG{n}{SetActive}\PYG{p}{(}\PYG{k}{false}\PYG{p}{);}
+		\PYG{p}{\PYGZcb{}}
+		\PYG{k}{else} \PYG{n+nf}{if} \PYG{p}{(!}\PYG{n}{attackMenuVisible} \PYG{p}{\PYGZam{}\PYGZam{}} \PYG{p}{!}\PYG{n}{reinforceMenuVisible} \PYG{p}{\PYGZam{}\PYGZam{}} \PYG{p}{(}\PYG{n}{currStage} \PYG{p}{\PYGZgt{}} \PYG{n}{Stages}\PYG{p}{.}\PYG{n}{REPLENISH}\PYG{p}{))} \PYG{p}{\PYGZob{}}
+			\PYG{k}{if} \PYG{p}{(}\PYG{n}{currentPlayer} \PYG{p}{==} \PYG{p}{(}\PYG{n}{numberOfActivePlayers} \PYG{p}{\PYGZhy{}} \PYG{l+m}{1}\PYG{p}{))} \PYG{p}{\PYGZob{}}
+				\PYG{n}{currentPlayer} \PYG{p}{=} \PYG{l+m}{0}\PYG{p}{;}
+			\PYG{p}{\PYGZcb{}}
+			\PYG{k}{else} \PYG{p}{\PYGZob{}}
+				\PYG{n}{currentPlayer}\PYG{p}{++;}
+
+			\PYG{p}{\PYGZcb{}}
+			\PYG{k}{while}\PYG{p}{(}\PYG{n}{TeamTerritories}\PYG{p}{[}\PYG{n}{currentPlayer}\PYG{p}{].}\PYG{n}{Count} \PYG{p}{==} \PYG{l+m}{0}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+				\PYG{k}{if}\PYG{p}{(}\PYG{n}{currentPlayer} \PYG{p}{==} \PYG{p}{(}\PYG{n}{numberOfActivePlayers} \PYG{p}{\PYGZhy{}} \PYG{l+m}{1}\PYG{p}{))} \PYG{p}{\PYGZob{}}
+					\PYG{n}{currentPlayer} \PYG{p}{=} \PYG{l+m}{0}\PYG{p}{;}
+				\PYG{p}{\PYGZcb{}} \PYG{k}{else} \PYG{p}{\PYGZob{}}
+					\PYG{n}{currentPlayer}\PYG{p}{++;}
+				\PYG{p}{\PYGZcb{}}
+			\PYG{p}{\PYGZcb{}}
+			\PYG{n}{numberOfTroopsToPlace} \PYG{p}{=} \PYG{n}{calculateReinforcements}\PYG{p}{();}
+			\PYG{n}{currStage} \PYG{p}{=} \PYG{n}{Stages}\PYG{p}{.}\PYG{n}{REPLENISH}\PYG{p}{;}
+		\PYG{p}{\PYGZcb{}}
+	\PYG{p}{\PYGZcb{}}
+
+	\PYG{k}{public} \PYG{k+kt}{bool} \PYG{n+nf}{FindInList}\PYG{p}{(}\PYG{n}{List}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}} \PYG{n}{subList}\PYG{p}{,} \PYG{n}{List}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}} \PYG{n}{superList}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+		\PYG{k}{foreach} \PYG{p}{(}\PYG{n}{Province} \PYG{n}{province} \PYG{k}{in} \PYG{n}{subList}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+			\PYG{k}{if}\PYG{p}{(!}\PYG{n}{superList}\PYG{p}{.}\PYG{n}{Contains}\PYG{p}{(}\PYG{n}{province}\PYG{p}{))} \PYG{p}{\PYGZob{}}
+				\PYG{k}{return} \PYG{k}{false}\PYG{p}{;}
+			\PYG{p}{\PYGZcb{}}
+		\PYG{p}{\PYGZcb{}}
+		\PYG{k}{return} \PYG{k}{true}\PYG{p}{;}
+	\PYG{p}{\PYGZcb{}}
+
+	\PYG{k+kt}{int} \PYG{n+nf}{calculateReinforcements}\PYG{p}{()} \PYG{p}{\PYGZob{}}
+		\PYG{k+kt}{int} \PYG{n}{territoryOwnershipCount} \PYG{p}{=} \PYG{n}{Mathf}\PYG{p}{.}\PYG{n}{Max}\PYG{p}{(}\PYG{n}{TeamTerritories}\PYG{p}{[}\PYG{n}{currentPlayer}\PYG{p}{].}\PYG{n}{Count} \PYG{p}{/} \PYG{l+m}{3}\PYG{p}{,}\PYG{l+m}{3}\PYG{p}{);}
+		\PYG{k+kt}{int} \PYG{n}{continentBonus} \PYG{p}{=} \PYG{l+m}{0}\PYG{p}{;}
+		\PYG{c+c1}{//Check Continental Bonuses}
+		\PYG{k}{if}\PYG{p}{(}\PYG{n}{FindInList}\PYG{p}{(}\PYG{n}{Europe}\PYG{p}{,} \PYG{n}{TeamTerritories}\PYG{p}{[}\PYG{n}{currentPlayer}\PYG{p}{]))} \PYG{p}{\PYGZob{}}
+			\PYG{n}{continentBonus} \PYG{p}{+=} \PYG{l+m}{5}\PYG{p}{;}
+		\PYG{p}{\PYGZcb{}}
+		\PYG{k}{if}\PYG{p}{(}\PYG{n}{FindInList}\PYG{p}{(}\PYG{n}{Asia}\PYG{p}{,} \PYG{n}{TeamTerritories}\PYG{p}{[}\PYG{n}{currentPlayer}\PYG{p}{]))} \PYG{p}{\PYGZob{}}
+			\PYG{n}{continentBonus} \PYG{p}{+=} \PYG{l+m}{7}\PYG{p}{;}
+		\PYG{p}{\PYGZcb{}}
+		\PYG{k}{if}\PYG{p}{(}\PYG{n}{FindInList}\PYG{p}{(}\PYG{n}{Africa}\PYG{p}{,} \PYG{n}{TeamTerritories}\PYG{p}{[}\PYG{n}{currentPlayer}\PYG{p}{]))} \PYG{p}{\PYGZob{}}
+			\PYG{n}{continentBonus} \PYG{p}{+=} \PYG{l+m}{3}\PYG{p}{;}
+		\PYG{p}{\PYGZcb{}}
+		\PYG{k}{if}\PYG{p}{(}\PYG{n}{FindInList}\PYG{p}{(}\PYG{n}{Oceania}\PYG{p}{,} \PYG{n}{TeamTerritories}\PYG{p}{[}\PYG{n}{currentPlayer}\PYG{p}{]))} \PYG{p}{\PYGZob{}}
+			\PYG{n}{continentBonus} \PYG{p}{+=} \PYG{l+m}{2}\PYG{p}{;}
+		\PYG{p}{\PYGZcb{}}
+		\PYG{k}{if}\PYG{p}{(}\PYG{n}{FindInList}\PYG{p}{(}\PYG{n}{SouthAmerica}\PYG{p}{,}\PYG{n}{TeamTerritories}\PYG{p}{[}\PYG{n}{currentPlayer}\PYG{p}{]))} \PYG{p}{\PYGZob{}}
+			\PYG{n}{continentBonus} \PYG{p}{+=} \PYG{l+m}{2}\PYG{p}{;}
+		\PYG{p}{\PYGZcb{}}
+		\PYG{k}{if}\PYG{p}{(}\PYG{n}{FindInList}\PYG{p}{(}\PYG{n}{NorthAmerica}\PYG{p}{,}\PYG{n}{TeamTerritories}\PYG{p}{[}\PYG{n}{currentPlayer}\PYG{p}{]))} \PYG{p}{\PYGZob{}}
+			\PYG{n}{continentBonus} \PYG{p}{+=} \PYG{l+m}{5}\PYG{p}{;}
+		\PYG{p}{\PYGZcb{}}
+		\PYG{k}{return} \PYG{n}{territoryOwnershipCount} \PYG{p}{+} \PYG{n}{continentBonus}\PYG{p}{;}
+	\PYG{p}{\PYGZcb{}}
+
+
+	\PYG{c+c1}{// Update is called once per frame}
+	\PYG{k}{void} \PYG{n+nf}{Update}\PYG{p}{()} \PYG{p}{\PYGZob{}}
+		\PYG{c+cm}{/* Basically I want to keep debug mode (in case of emergency) so it\PYGZsq{}s activated/deactivated using ` (The same key to open the command menu in most modern games) */}
+		\PYG{k}{if}\PYG{p}{(}\PYG{n}{Input}\PYG{p}{.}\PYG{n}{GetKeyDown}\PYG{p}{(}\PYG{n}{KeyCode}\PYG{p}{.}\PYG{n}{BackQuote}\PYG{p}{))} \PYG{p}{\PYGZob{}}
+			\PYG{c+c1}{//Toggle Debug mode}
+			\PYG{n}{InDebugMode} \PYG{p}{=} \PYG{p}{!}\PYG{n}{InDebugMode}\PYG{p}{;}
+			\PYG{n}{Debug}\PYG{p}{.}\PYG{n}{Log}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Debug Mode Toggled!\PYGZdq{}}\PYG{p}{);}
+		\PYG{p}{\PYGZcb{}}
+
+		\PYG{k}{if} \PYG{p}{(}\PYG{n}{InDebugMode}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+			\PYG{n}{DebugEval}\PYG{p}{();}
+		\PYG{p}{\PYGZcb{}} \PYG{k}{else} \PYG{k}{if} \PYG{p}{(!}\PYG{n}{mainMenuVisible}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+			\PYG{k}{switch} \PYG{p}{(}\PYG{n}{currStage}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+				\PYG{k}{case} \PYG{n}{Stages}\PYG{p}{.}\PYG{n}{NOT\PYGZus{}STARTED}\PYG{p}{:}
+					\PYG{n}{GameSetup}\PYG{p}{();}
+					\PYG{k}{break}\PYG{p}{;}
+				\PYG{k}{case} \PYG{n}{Stages}\PYG{p}{.}\PYG{n}{GAME\PYGZus{}SETUP}\PYG{p}{:}
+					\PYG{n}{statusBar}\PYG{p}{.}\PYG{n}{text} \PYG{p}{=} \PYG{n}{playerColors}\PYG{p}{[}\PYG{n}{currentPlayer}\PYG{p}{].}\PYG{n}{ToUpper}\PYG{p}{()} \PYG{p}{+} \PYG{l+s}{\PYGZdq{}: Place a Troop!\PYGZdq{}}\PYG{p}{;}
+					\PYG{k}{if}\PYG{p}{(}\PYG{n}{Input}\PYG{p}{.}\PYG{n}{GetMouseButtonDown}\PYG{p}{(}\PYG{l+m}{0}\PYG{p}{)} \PYG{p}{\PYGZam{}\PYGZam{}} \PYG{p}{!}\PYG{n}{attackMenuVisible} \PYG{p}{\PYGZam{}\PYGZam{}} \PYG{p}{!}\PYG{n}{reinforceMenuVisible}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+						\PYG{n}{selected} \PYG{p}{=} \PYG{n}{GetTerritoryClick}\PYG{p}{();}
+						\PYG{k}{if} \PYG{p}{(}\PYG{n}{selected} \PYG{p}{\PYGZam{}\PYGZam{}} \PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{Color}\PYG{p}{.}\PYG{n}{Equals}\PYG{p}{(}\PYG{n}{playerColors}\PYG{p}{[}\PYG{n}{currentPlayer}\PYG{p}{]))} \PYG{p}{\PYGZob{}}
+							\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{TroopCount}\PYG{p}{++;}
+							\PYG{k}{if}\PYG{p}{(}\PYG{n}{currentPlayer} \PYG{p}{==} \PYG{p}{(}\PYG{n}{numberOfActivePlayers} \PYG{p}{\PYGZhy{}} \PYG{l+m}{1}\PYG{p}{))} \PYG{p}{\PYGZob{}}
+								\PYG{n}{currentPlayer} \PYG{p}{=} \PYG{l+m}{0}\PYG{p}{;}
+								\PYG{n}{numberOfTroopsToPlace}\PYG{p}{\PYGZhy{}\PYGZhy{};}
+								\PYG{k}{if} \PYG{p}{(}\PYG{n}{numberOfTroopsToPlace} \PYG{p}{==} \PYG{l+m}{0}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+									\PYG{n}{currStage} \PYG{p}{=} \PYG{n}{Stages}\PYG{p}{.}\PYG{n}{REPLENISH}\PYG{p}{;}
+									\PYG{n}{numberOfTroopsToPlace} \PYG{p}{=} \PYG{n}{calculateReinforcements}\PYG{p}{();}
+								\PYG{p}{\PYGZcb{}}
+							\PYG{p}{\PYGZcb{}} \PYG{k}{else} \PYG{p}{\PYGZob{}}
+								\PYG{n}{currentPlayer}\PYG{p}{++;}
+							\PYG{p}{\PYGZcb{}}
+						\PYG{p}{\PYGZcb{}}
+					\PYG{p}{\PYGZcb{}}
+					\PYG{k}{break}\PYG{p}{;}
+				\PYG{k}{case} \PYG{n}{Stages}\PYG{p}{.}\PYG{n}{REPLENISH}\PYG{p}{:}
+					\PYG{n}{statusBar}\PYG{p}{.}\PYG{n}{text} \PYG{p}{=} \PYG{n}{playerColors}\PYG{p}{[}\PYG{n}{currentPlayer}\PYG{p}{].}\PYG{n}{ToUpper}\PYG{p}{()} \PYG{p}{+} \PYG{l+s}{\PYGZdq{}: Place \PYGZdq{}} \PYG{p}{+} \PYG{n}{numberOfTroopsToPlace}\PYG{p}{.}\PYG{n}{ToString}\PYG{p}{()} \PYG{p}{+} \PYG{l+s}{\PYGZdq{} Troops!\PYGZdq{}}\PYG{p}{;}
+					\PYG{k}{if}\PYG{p}{(}\PYG{n}{Input}\PYG{p}{.}\PYG{n}{GetMouseButtonDown}\PYG{p}{(}\PYG{l+m}{0}\PYG{p}{)} \PYG{p}{\PYGZam{}\PYGZam{}} \PYG{p}{!}\PYG{n}{attackMenuVisible} \PYG{p}{\PYGZam{}\PYGZam{}} \PYG{p}{!}\PYG{n}{reinforceMenuVisible}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+						\PYG{n}{selected} \PYG{p}{=} \PYG{n}{GetTerritoryClick}\PYG{p}{();}
+						\PYG{k}{if} \PYG{p}{(}\PYG{n}{selected} \PYG{p}{\PYGZam{}\PYGZam{}} \PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{Color}\PYG{p}{.}\PYG{n}{Equals}\PYG{p}{(}\PYG{n}{playerColors}\PYG{p}{[}\PYG{n}{currentPlayer}\PYG{p}{]))} \PYG{p}{\PYGZob{}}
+							\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{TroopCount}\PYG{p}{++;}
+							\PYG{n}{numberOfTroopsToPlace}\PYG{p}{\PYGZhy{}\PYGZhy{};}
+							\PYG{k}{if}\PYG{p}{(}\PYG{n}{numberOfTroopsToPlace} \PYG{p}{==} \PYG{l+m}{0}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+								\PYG{n}{currStage} \PYG{p}{=} \PYG{n}{Stages}\PYG{p}{.}\PYG{n}{ATTACK}\PYG{p}{;}
+								\PYG{n}{selected} \PYG{p}{=} \PYG{k}{null}\PYG{p}{;}
+							\PYG{p}{\PYGZcb{}}
+						\PYG{p}{\PYGZcb{}}
+					\PYG{p}{\PYGZcb{}}
+					\PYG{k}{break}\PYG{p}{;}
+				\PYG{k}{case} \PYG{n}{Stages}\PYG{p}{.}\PYG{n}{ATTACK}\PYG{p}{:}
+					\PYG{k}{if}\PYG{p}{(!}\PYG{n}{selected}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+						\PYG{n}{statusBar}\PYG{p}{.}\PYG{n}{text} \PYG{p}{=} \PYG{n}{playerColors}\PYG{p}{[}\PYG{n}{currentPlayer}\PYG{p}{].}\PYG{n}{ToUpper}\PYG{p}{()} \PYG{p}{+} \PYG{l+s}{\PYGZdq{}: Click a Territory to attack from\PYGZdq{}}\PYG{p}{;}
+					\PYG{p}{\PYGZcb{}} \PYG{k}{else} \PYG{p}{\PYGZob{}}
+						\PYG{n}{statusBar}\PYG{p}{.}\PYG{n}{text} \PYG{p}{=} \PYG{n}{playerColors}\PYG{p}{[}\PYG{n}{currentPlayer}\PYG{p}{].}\PYG{n}{ToUpper}\PYG{p}{()} \PYG{p}{+} \PYG{l+s}{\PYGZdq{}: Select a region to attack\PYGZbs{}nRight Click To Reinforce\PYGZdq{}}\PYG{p}{;}
+					\PYG{p}{\PYGZcb{}}
+					\PYG{k}{if}\PYG{p}{(}\PYG{n}{Input}\PYG{p}{.}\PYG{n}{GetMouseButtonDown}\PYG{p}{(}\PYG{l+m}{0}\PYG{p}{)} \PYG{p}{\PYGZam{}\PYGZam{}} \PYG{p}{!}\PYG{n}{attackMenuVisible} \PYG{p}{\PYGZam{}\PYGZam{}} \PYG{p}{!}\PYG{n}{reinforceMenuVisible}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+						\PYG{n}{GameObject} \PYG{n}{temp} \PYG{p}{=} \PYG{n}{GetTerritoryClick}\PYG{p}{();}
+						\PYG{k}{if}\PYG{p}{(}\PYG{n}{temp}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+							\PYG{k}{if} \PYG{p}{(}\PYG{n}{temp}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{Color}\PYG{p}{.}\PYG{n}{Equals}\PYG{p}{(}\PYG{n}{playerColors}\PYG{p}{[}\PYG{n}{currentPlayer}\PYG{p}{]))} \PYG{p}{\PYGZob{}}
+								\PYG{k}{if}\PYG{p}{(}\PYG{n}{selected}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+									\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{Deselect}\PYG{p}{();}
+								\PYG{p}{\PYGZcb{}}
+								\PYG{n}{selected} \PYG{p}{=} \PYG{n}{temp}\PYG{p}{;}
+								\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{Select}\PYG{p}{();}
+							\PYG{p}{\PYGZcb{}} \PYG{k}{else} \PYG{p}{\PYGZob{}}
+								\PYG{n}{selected2} \PYG{p}{=} \PYG{n}{temp}\PYG{p}{;}
+								\PYG{n}{AttackSetup}\PYG{p}{();}
+							\PYG{p}{\PYGZcb{}}
+						\PYG{p}{\PYGZcb{}}
+					\PYG{p}{\PYGZcb{}}
+					\PYG{k}{if}\PYG{p}{(}\PYG{n}{Input}\PYG{p}{.}\PYG{n}{GetMouseButtonDown}\PYG{p}{(}\PYG{l+m}{1}\PYG{p}{))} \PYG{p}{\PYGZob{}}
+						\PYG{n}{currStage} \PYG{p}{=} \PYG{n}{Stages}\PYG{p}{.}\PYG{n}{REINFORCE}\PYG{p}{;}
+						\PYG{n}{reinforcementPerformedThisTurn} \PYG{p}{=} \PYG{k}{false}\PYG{p}{;}
+						\PYG{k}{if} \PYG{p}{(}\PYG{n}{selected}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+							\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{Deselect}\PYG{p}{();}
+						\PYG{p}{\PYGZcb{}}
+						\PYG{n}{selected} \PYG{p}{=} \PYG{k}{null}\PYG{p}{;}
+						\PYG{n}{selected2} \PYG{p}{=} \PYG{k}{null}\PYG{p}{;}
+					\PYG{p}{\PYGZcb{}}
+					\PYG{k}{break}\PYG{p}{;}
+				\PYG{k}{case} \PYG{n}{Stages}\PYG{p}{.}\PYG{n}{REINFORCE}\PYG{p}{:}
+					\PYG{k}{if} \PYG{p}{(!}\PYG{n}{selected}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+						\PYG{n}{statusBar}\PYG{p}{.}\PYG{n}{text} \PYG{p}{=} \PYG{n}{playerColors}\PYG{p}{[}\PYG{n}{currentPlayer}\PYG{p}{].}\PYG{n}{ToUpper}\PYG{p}{()} \PYG{p}{+} \PYG{l+s}{\PYGZdq{}: Select a Region to Move Troops From\PYGZdq{}}\PYG{p}{;}
+					\PYG{p}{\PYGZcb{}} \PYG{k}{else} \PYG{p}{\PYGZob{}}
+						\PYG{n}{statusBar}\PYG{p}{.}\PYG{n}{text} \PYG{p}{=} \PYG{n}{playerColors}\PYG{p}{[}\PYG{n}{currentPlayer}\PYG{p}{].}\PYG{n}{ToUpper}\PYG{p}{()} \PYG{p}{+} \PYG{l+s}{\PYGZdq{}: Select a Region to Move Troops To\PYGZbs{}n(Right Click To change departing region)\PYGZdq{}}\PYG{p}{;}
+					\PYG{p}{\PYGZcb{}}
+					\PYG{k}{if}\PYG{p}{(}\PYG{n}{Input}\PYG{p}{.}\PYG{n}{GetMouseButtonDown}\PYG{p}{(}\PYG{l+m}{0}\PYG{p}{)} \PYG{p}{\PYGZam{}\PYGZam{}} \PYG{p}{!}\PYG{n}{attackMenuVisible} \PYG{p}{\PYGZam{}\PYGZam{}} \PYG{p}{!}\PYG{n}{reinforceMenuVisible}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+						\PYG{n}{GameObject} \PYG{n}{temp} \PYG{p}{=} \PYG{n}{GetTerritoryClick}\PYG{p}{();}
+						\PYG{k}{if}\PYG{p}{(}\PYG{n}{temp}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+							\PYG{k}{if}\PYG{p}{(}\PYG{n}{temp}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{Color}\PYG{p}{.}\PYG{n}{Equals}\PYG{p}{(}\PYG{n}{playerColors}\PYG{p}{[}\PYG{n}{currentPlayer}\PYG{p}{]))} \PYG{p}{\PYGZob{}}
+								\PYG{k}{if}\PYG{p}{(!}\PYG{n}{selected}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+									\PYG{n}{temp}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{Select}\PYG{p}{();}
+									\PYG{n}{selected} \PYG{p}{=} \PYG{n}{temp}\PYG{p}{;}
+								\PYG{p}{\PYGZcb{}} \PYG{k}{else} \PYG{p}{\PYGZob{}}
+									\PYG{n}{selected2} \PYG{p}{=} \PYG{n}{temp}\PYG{p}{;}
+									\PYG{n}{ReinforceSetup}\PYG{p}{();}
+								\PYG{p}{\PYGZcb{}}
+							\PYG{p}{\PYGZcb{}} 
+						\PYG{p}{\PYGZcb{}}
+					\PYG{p}{\PYGZcb{}}
+					\PYG{k}{if}\PYG{p}{(}\PYG{n}{Input}\PYG{p}{.}\PYG{n}{GetMouseButtonDown}\PYG{p}{(}\PYG{l+m}{1}\PYG{p}{)} \PYG{p}{\PYGZam{}\PYGZam{}} \PYG{p}{!}\PYG{n}{attackMenuVisible} \PYG{p}{\PYGZam{}\PYGZam{}} \PYG{p}{!}\PYG{n}{reinforceMenuVisible}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+						\PYG{n}{GameObject} \PYG{n}{temp} \PYG{p}{=} \PYG{n}{GetTerritoryClick}\PYG{p}{();}
+						\PYG{k}{if}\PYG{p}{(}\PYG{n}{temp}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+							\PYG{k}{if}\PYG{p}{(}\PYG{n}{temp}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{Color}\PYG{p}{.}\PYG{n}{Equals}\PYG{p}{(}\PYG{n}{playerColors}\PYG{p}{[}\PYG{n}{currentPlayer}\PYG{p}{]))} \PYG{p}{\PYGZob{}}
+								\PYG{k}{if}\PYG{p}{(}\PYG{n}{selected}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+									\PYG{n}{selected}\PYG{p}{.}\PYG{n}{GetComponent}\PYG{p}{\PYGZlt{}}\PYG{n}{Province}\PYG{p}{\PYGZgt{}().}\PYG{n}{Deselect}\PYG{p}{();}
+								\PYG{p}{\PYGZcb{}}
+								\PYG{n}{selected} \PYG{p}{=} \PYG{n}{temp}\PYG{p}{;}
+							\PYG{p}{\PYGZcb{}}
+						\PYG{p}{\PYGZcb{}}
+					\PYG{p}{\PYGZcb{}}
+					\PYG{k}{if}\PYG{p}{(!}\PYG{n}{reinforceMenuVisible} \PYG{p}{\PYGZam{}\PYGZam{}} \PYG{n}{reinforcementPerformedThisTurn}\PYG{p}{)} \PYG{p}{\PYGZob{}}
+						\PYG{n}{NewTurn}\PYG{p}{();}
+					\PYG{p}{\PYGZcb{}}
+					\PYG{k}{break}\PYG{p}{;}
+			\PYG{p}{\PYGZcb{}}
+			\PYG{k}{if}\PYG{p}{(}\PYG{n}{Input}\PYG{p}{.}\PYG{n}{GetKeyDown}\PYG{p}{(}\PYG{n}{KeyCode}\PYG{p}{.}\PYG{n}{Escape}\PYG{p}{))} \PYG{p}{\PYGZob{}}
+				\PYG{n}{mainMenu}\PYG{p}{.}\PYG{n}{SetActive}\PYG{p}{(}\PYG{k}{true}\PYG{p}{);}
+				\PYG{n}{mainMenuVisible} \PYG{p}{=} \PYG{k}{true}\PYG{p}{;}
+				\PYG{n}{statusMenu}\PYG{p}{.}\PYG{n}{SetActive}\PYG{p}{(}\PYG{k}{true}\PYG{p}{);}
+			\PYG{p}{\PYGZcb{}}
+		\PYG{p}{\PYGZcb{}}
+	\PYG{p}{\PYGZcb{}}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}
